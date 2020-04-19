@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Card as CardEntity } from "entity/card";
+import { Card as CardEntity } from "model/interaction/game/card";
 import Card from "./atoms/card";
 import cardFactory from "factory/card";
 import * as baseStyle from "./cards.styl";
@@ -34,7 +34,7 @@ const publicEstate: React.FC<Props> = props => {
     return (
         <section className={baseStyle.cards}>
             <h2>公共の建物</h2>
-            <ul>{publicBuildings}</ul>
+            <ul style={{marginBottom: 0}}>{publicBuildings}</ul>
             <ul>{soldEstates}</ul>
         </section>
     );

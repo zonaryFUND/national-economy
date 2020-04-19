@@ -1,15 +1,8 @@
-import { Card, BuildingType } from "entity/card";
+import { Card } from "model/interaction/game/card";
 import { Farm, SlashAndBurn, DesignOffice, Cafe, Orchard, Factory, ConstructionCompany, Warehouse, LawOffice, Plantation, Restaurant, Settler, Realtor, SteelWorks, GeneralConstructor, COOP, Union, CarFactory, Raillord, HQBuilding, CompanyHousing, Mansion, ChemicalFactory, CombineConstructor } from "./building";
 import { Quarry, Mine, School, Carpenter, Stall, StallMulti, Market, MarketMulti, HighSchool, Supermarket, SupermarketMulti, University, DepartmentStore, DepartmentStoreMulti, Collage, InternationalExposition, InternationalExpositionMulti } from "./public-estate";
 import { ConsumerGoods } from "./consumer-goods";
-
-type PublicBuildingName = "採石場" | "鉱山" | "学校"| "大工" | "露店" | "市場" | "高等学校" | "スーパーマーケット" | "大学" | "百貨店" | "専門学校" | "万博";
-type BuildingName = "農場" | "焼畑" | "設計事務所" | "珈琲店" | "果樹園" |
-                    "工場" | "建設会社" | "倉庫" | "法律事務所" | "大農園" |
-                    "レストラン" | "開拓民" | "不動産屋" | "製鉄所" | "ゼネコン" |
-                    "農協" | "労働組合" | "自動車工場" | "鉄道" | "本社ビル" | 
-                    "社宅" | "邸宅" | "化学工場" | "二胡市建設";
-type CardName = PublicBuildingName | BuildingName | "消費財";
+import { CardName } from "model/protocol/game/card";
 
 export default function cardFactory(name: CardName, players: number = 2): Card {
     switch (name) {

@@ -1,6 +1,7 @@
-import { Card } from "entity/card";
+import { Card } from "model/interaction/game/card";
+import { CardName } from "model/protocol/game/card";
 
-function makePublicCard(name: string, imageURL: string, description: string): Card {
+function makePublicCard(name: CardName, imageURL: string, description: string): Card {
     return {
         name: name,
         cost: undefined,

@@ -1,10 +1,11 @@
 import * as React from "react";
 import Card from "./atoms/card";
-import { Card as CardEntity } from "entity/card";
+import { Card as CardEntity } from "model/interaction/game/card";
 import * as style from "./cards.styl";
 
 interface Props {
     title: string;
+    tooltip?: string;
     cards: CardEntity[];
 }
 
@@ -13,7 +14,7 @@ const hand: React.FC<Props> = props => {
 
     return (
         <section className={style.cards}>
-            <h2>{props.title}</h2>
+            <h2 title={props.tooltip}>{props.title}</h2>
             <ul>{cards}</ul>
         </section>
     );

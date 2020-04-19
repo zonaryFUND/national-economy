@@ -1,4 +1,4 @@
-import { Card } from "entity/card";
+import { Card } from "model/interaction/game/card";
 
 export const Farm: Card = {
     name: "農場",

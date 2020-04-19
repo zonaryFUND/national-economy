@@ -5,11 +5,8 @@ import { Room as RoomEntity } from "entity/room";
 import useObservable from "components/common/use-observable";
 
 const lobby: React.FC<Repository<RoomEntity[]>> = props => {
-    const [rooms, setRooms] = React.useState([] as RoomEntity[]);
-
-    useObservable(() => props.stream.subscribe(setRooms));
-
-    const roomsNode = rooms.map(r => (<Room {...r} />));
+    const rooms = useObservable(props.stream);
+    const roomsNode = rooms ? rooms.map(r => (<Room {...r} />)) : null;
 
     return (
         <article>

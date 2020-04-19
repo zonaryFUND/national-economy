@@ -1,0 +1,87 @@
+.player
+    border-radius: 8px
+    padding: 6px
+    border: 2px solid transparent
+
+    h2
+        display: -webkit-flex
+        justify-content: space-between
+        font-size: 20px
+
+        .start
+            background-color: white
+            border-radius: 4px
+            border: 1px solid red
+            height: 16px
+            line-height: 16px
+            font-size: 12px
+            vertical-align: middle
+
+    img 
+        height: 20px
+
+    section
+        border-radius: 4px
+        background-color: #F0ECE1
+        padding: 4px
+
+        h3
+            font-size: 14px
+
+        p
+            font-size: 14px
+            font-weight: bold
+
+    section:not(:last-child)
+        margin-bottom: 4px
+
+    .hand
+        p
+            span
+                font-size: 10px
+                font-weight: normal
+
+    .workers
+        :not(:last-child)
+            margin-right: 4px
+        img
+            width: 30px
+            height: 30px
+            
+        .dispatched
+            opacity: 0.3
+        .blank
+            opacity: 0.1
+
+    .wealth
+        p
+            :not(:last-child)
+                margin-right: 8px
+
+            .penalty
+                color: red
+
+            img
+                width: 16px
+                height: 16px
+                vertical-align: middle
+
+.current
+    border: 2px solid red
+
+.red
+    background-color: #ffd9d9
+    .available,.training
+        filter: invert(15%) sepia(95%) saturate(6932%) hue-rotate(358deg) brightness(95%) contrast(112%)
+.blue
+    background-color: #d9f0ff
+    .available,.training
+        filter: invert(8%) sepia(99%) saturate(7044%) hue-rotate(247deg) brightness(100%) contrast(145%)
+.green
+    background-color: #d9ffdd
+    .available,.training
+        filter: invert(17%) sepia(91%) saturate(7085%) hue-rotate(128deg) brightness(100%) contrast(106%)
+.yellow
+    background-color: #feffd9
+    .available,.training
+        filter: invert(81%) sepia(81%) saturate(633%) hue-rotate(359deg) brightness(70%) contrast(105%)
