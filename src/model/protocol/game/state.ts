@@ -4,14 +4,21 @@ import { CardName } from "./card";
 export interface InRoundState {
     currentPlayer: PlayerIdentifier;
     phase: "dispatching" | "oncardeffect";
-    effecting?: {
-        card: CardName;
-        step: number;
-    }
+    effecting?: CardName;
+    revealing?: CardName[]
 }
 
-export interface ExRoundPlayerStatus {
-    status: "selling" | "discarding" | "finish";
-}
-
+export type ExRoundPlayerStatus = "selling" | "discarding" | "finish";
 export type ExRoundState = {[key: string]: ExRoundPlayerStatus};
+
+export interface PlayerResult {
+    cash: number;
+    buildings: number;
+    penalty: number;
+    bonus: number; 
+    total: number;
+}
+
+export interface ResultState {
+    winner: string;
+};

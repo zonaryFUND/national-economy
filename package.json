@@ -9,6 +9,8 @@
   "devDependencies": {
     "@babel/core": "^7.9.0",
     "@babel/preset-env": "^7.9.5",
+    "@types/mocha": "^7.0.2",
+    "@types/power-assert": "^1.5.3",
     "@types/react": "^16.9.34",
     "@types/react-dom": "^16.9.6",
     "@types/react-router-dom": "^5.1.4",
@@ -16,13 +18,17 @@
     "@types/webpack-dev-server": "^3.10.1",
     "babel-loader": "^8.1.0",
     "css-loader": "^3.5.2",
+    "espower-typescript": "^9.0.2",
     "file-loader": "^6.0.0",
     "html-webpack-plugin": "^4.2.0",
+    "mocha": "^7.1.1",
+    "power-assert": "^1.6.1",
     "style-loader": "^1.1.4",
     "stylus": "^0.54.7",
     "stylus-loader": "^3.0.2",
     "ts-loader": "^7.0.0",
     "ts-node": "^8.8.2",
+    "tsconfig-paths": "^3.9.0",
     "typescript": "^3.8.3",
     "webpack": "^4.42.1",
     "webpack-cli": "^3.3.11",
@@ -37,6 +43,7 @@
     "rxjs": "^6.5.5"
   },
   "scripts": {
-    "dev": "webpack-dev-server --mode development"
+    "dev": "webpack-dev-server --mode development",
+    "test": "./node_modules/.bin/mocha -r ts-node/register -r tsconfig-paths/register src/test/**/*.ts --timeout 30000"
   }
 }

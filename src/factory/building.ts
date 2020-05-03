@@ -1,4 +1,5 @@
 import { Card } from "model/interaction/game/card";
+import cardFactory from "./card";
 
 export const Farm: Card = {
     name: "農場",
@@ -87,7 +88,8 @@ export const LawOffice: Card = {
     imageURL: "https://3.bp.blogspot.com/-oz93QSQJ83E/XGjxrj8swtI/AAAAAAABRaw/YRPzdH4aTFkmtKGg_h6aoRNaWJjRrvlHQCLcBGAs/s300/building_law_houritsu.png",
     description: "終了時：負債から5枚まで免除する\n売却不可",
     buildingType: ["unsellable"],
-    score: 8
+    score: 8,
+    bonusScore: player => Math.min(5, player.penalty) * 3
 };
 
 export const Plantation: Card = {
@@ -127,7 +129,8 @@ export const Realtor: Card = {
     imageURL: "https://3.bp.blogspot.com/-0OFdjac3WHY/Vf-Zk0Rp6lI/AAAAAAAAyA8/Ci0Rbv0vsr0/s400/building_fudousan.png",
     description: "終了時：所有する建物1つにつき+3点\n売却不可",
     buildingType: ["unsellable"],
-    score: 10
+    score: 10,
+    bonusScore: player => player.buildings.length * 3
 };
 
 export const SteelWorks: Card = {
@@ -157,7 +160,8 @@ export const COOP: Card = {
     imageURL: "https://3.bp.blogspot.com/-qCgnIYFQ5zE/VoX5IAy8C0I/AAAAAAAA2SY/9ltDQNwCQyA/s550/chisanchisyou_text.png",
     description: "終了時：手札の消費財1枚につき+3点\n売却不可",
     buildingType: ["unsellable"],
-    score: 12
+    score: 12,
+    bonusScore: player => player.hand.filter(c => c == "消費財").length * 3
 };
 
 export const Union: Card = {
@@ -167,7 +171,8 @@ export const Union: Card = {
     imageURL: "https://2.bp.blogspot.com/-2E2Ml8C0My0/VyNdSAwabtI/AAAAAAAA6Mk/c9DqLRh_UR4aZM0925CZoFdJi4NpKQz6ACLcB/s450/demo_strike_worker.png",
     description: "終了時：労働者1人につき+6点\n売却不可",
     buildingType: ["unsellable"],
-    score: 0
+    score: 0,
+    bonusScore: player => player.workers.employed * 6
 };
 
 export const CarFactory: Card = {
@@ -180,14 +185,15 @@ export const CarFactory: Card = {
     score: 24
 };
 
-export const Raillord: Card = {
+export const Railroad: Card = {
     name: "鉄道",
     type: "building",
     cost: 5,
     imageURL: "https://3.bp.blogspot.com/-YJrC2uSdeHo/WaNvCvqgInI/AAAAAAABGKg/QfKlpB-ZLeg4DpVRjN9_C-1gaFAE49XbQCLcBGAs/s400/train_kikansya_kemuri.png",
     description: "終了時：所有する[industrial]につき+8点\n売却不可",
     buildingType: ["unsellable"],
-    score: 18
+    score: 18,
+    bonusScore: player => player.buildings.filter(b => cardFactory(b.card).buildingType.includes("industrial")).length * 8
 };
 
 export const HQBuilding: Card = {
@@ -197,7 +203,8 @@ export const HQBuilding: Card = {
     imageURL: "https://1.bp.blogspot.com/-Uo4P6jchvm4/VpjCmhB9vEI/AAAAAAAA3D8/EfnGQe4_YM4/s400/kousou_building.png",
     description: "終了時：所有する[unsellable]につき+6点\n売却不可",
     buildingType: ["unsellable"],
-    score: 20
+    score: 20,
+    bonusScore: player => player.buildings.filter(b => cardFactory(b.card).buildingType.includes("unsellable")).length * 6
 };
 
 export const CompanyHousing: Card = {
@@ -230,7 +237,7 @@ export const ChemicalFactory: Card = {
     score: 18
 };
 
-export const CombineConstructor: Card = {
+export const DoubleConstructor: Card = {
     name: "二胡市建設",
     type: "building",
     cost: 5,

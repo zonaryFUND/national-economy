@@ -1,5 +1,5 @@
 import { Card } from "model/interaction/game/card";
-import { Farm, SlashAndBurn, DesignOffice, Cafe, Orchard, Factory, ConstructionCompany, Warehouse, LawOffice, Plantation, Restaurant, Settler, Realtor, SteelWorks, GeneralConstructor, COOP, Union, CarFactory, Raillord, HQBuilding, CompanyHousing, Mansion, ChemicalFactory, CombineConstructor } from "./building";
+import { Farm, SlashAndBurn, DesignOffice, Cafe, Orchard, Factory, ConstructionCompany, Warehouse, LawOffice, Plantation, Restaurant, Settler, Realtor, SteelWorks, GeneralConstructor, COOP, Union, CarFactory, HQBuilding, CompanyHousing, Mansion, ChemicalFactory, DoubleConstructor, Railroad } from "./building";
 import { Quarry, Mine, School, Carpenter, Stall, StallMulti, Market, MarketMulti, HighSchool, Supermarket, SupermarketMulti, University, DepartmentStore, DepartmentStoreMulti, Collage, InternationalExposition, InternationalExpositionMulti } from "./public-estate";
 import { ConsumerGoods } from "./consumer-goods";
 import { CardName } from "model/protocol/game/card";
@@ -50,7 +50,7 @@ export default function cardFactory(name: CardName, players: number = 2): Card {
                         return Union;
         case "自動車工場":
                         return CarFactory;
-        case "鉄道":    return Raillord;
+        case "鉄道":    return Railroad;
         case "本社ビル": 
                         return HQBuilding;
         case "社宅":    return CompanyHousing;
@@ -58,7 +58,7 @@ export default function cardFactory(name: CardName, players: number = 2): Card {
         case "化学工場":
                         return ChemicalFactory;
         case "二胡市建設":
-                        return CombineConstructor;
+                        return DoubleConstructor;
 
         // 消費財
         case "消費財":  return ConsumerGoods;

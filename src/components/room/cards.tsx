@@ -1,21 +1,30 @@
 import * as React from "react";
 import Card from "./atoms/card";
-import { Card as CardEntity } from "model/interaction/game/card";
 import * as style from "./cards.styl";
+import { CardName } from "model/protocol/game/card";
+import { Building } from "model/protocol/game/building";
+import Workers from "./atoms/workers";
 
 interface Props {
     title: string;
     tooltip?: string;
-    cards: CardEntity[];
+    cards?: CardName[];
+    buildings?: Building[];
 }
 
 const hand: React.FC<Props> = props => {
-    const cards = props.cards.map(c => <Card card={c} />);
+    const cards = props.cards ? props.cards.map((c, i) => <Card card={c} key={`${i}-${c}`} />) : null;
+    const buildings = props.buildings ? props.buildings.map((b, i) => (
+        <Card card={b.card} key={`${i}-${b.card}`}>
+            <Workers owners={b.workersOwner} />
+        </Card>
+    )) : null;
 
     return (
         <section className={style.cards}>
             <h2 title={props.tooltip}>{props.title}</h2>
-            <ul>{cards}</ul>
+            {cards ? <ul>{cards}</ul> : null}
+            {buildings ? <ul>{buildings}</ul> : buildings}
         </section>
     );
 };

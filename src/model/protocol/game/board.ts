@@ -6,10 +6,13 @@ export interface Board {
     currentRound: number;
     deck: CardName[];
     trash: CardName[];
-    leftConsumerGoods: number;
     houseHold: number;
     players: Player[];
     startPlayer: PlayerIdentifier;
     publicBuildings: Building[];
     soldBuildings: Building[];
+}
+
+export function wage(round: number): number {
+    return [2, 2, 3, 3, 3, 4, 4, 5, 5][round - 1];
 }

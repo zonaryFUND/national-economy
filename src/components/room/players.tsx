@@ -1,13 +1,10 @@
 import * as React from "react";
-import Player, { Player as PlayerProps} from "./player";
 import * as style from "./players.module.styl";
+import { GameProps, withGame } from "./context/game";
+import Player from "./player";
 
-interface Props {
-    players: PlayerProps[];
-}
-
-const players: React.FC<Props> = props => {
-    const players = props.players.map(p => <Player {...p} />);
+const players: React.FC<GameProps> = props => {
+    const players = props.game.board.players.map(p => <Player id={p.id} key={p.id} />)
 
     return (
         <section className={style.players}>
@@ -16,4 +13,4 @@ const players: React.FC<Props> = props => {
     );
 };
 
-export default players;
+export default withGame(players);

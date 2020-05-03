@@ -1,14 +1,19 @@
 import * as React from "react";
-import { Card } from "model/interaction/game/card";
 import * as style from "./card.module.styl";
+import { CardName } from "model/protocol/game/card";
+import cardFactory from "factory/card";
 
 interface Props {
-    card: Card;
+    card: CardName;
+    activeRound?: number;
+    onClick?: () => void;
 }
 
 const card: React.FC<Props> = props => {
+    const card = cardFactory(props.card);
+
     const cardStyle = (() => {
-        switch (props.card.type) {
+        switch (card.type) {
             case "building":        return style.building;
             case "public":          return style.public;
             case "consumer-goods":  return style.consumergoods;
@@ -16,7 +21,7 @@ const card: React.FC<Props> = props => {
     })();
 
     const cardType = (() => {
-        switch (props.card.type) {
+        switch (card.type) {
             case "building":        return "建物カード";
             case "consumer-goods":  return null;
             case "public":          return "公共職場カード";
@@ -24,19 +29,27 @@ const card: React.FC<Props> = props => {
     })();
 
     return (
-        <li className={`${style.card} ${cardStyle}`}>
-            <header>{props.card.cost ? <p>{props.card.cost}</p> : null}<h3>{props.card.name}</h3></header>
-            <div>
-                <img src={props.card.imageURL} />
+        <li className={`${style.card} ${cardStyle}`} onClick={props.onClick} style={props.onClick ? {cursor: "pointer"} : undefined}>
+            <header style={card.cost ? {paddingLeft: 20} : undefined}>{card.cost ? <p>{card.cost}</p> : null}<h3>{card.name}</h3></header>
+            <div className={style.img}>
+                <img src={card.imageURL} />
             </div>
-            <footer>{props.card.score ? <p>{props.card.score}</p> : null}</footer>
+            <footer>{card.score != undefined ? <p>{card.score}</p> : null}</footer>
             <p className={style.tooltip}>
-                {props.card.name}<br />
+                {card.name}<br />
                 {cardType ? <>{cardType}<br /></> : null}
-                {props.card.cost ? <>建設コスト{props.card.cost}<br /></> : null}
-                <br />{props.card.description}<br /><br />
-                {props.card.score ? `資産価値：$${props.card.score}` : null}
+                {card.cost ? <>建設コスト{card.cost}<br /></> : null}
+                <br />{card.description}<br /><br />
+                {card.score != undefined ? `資産価値：$${card.score}` : null}
             </p>
+            {
+                props.activeRound ?
+                <div className={style.cover}>
+                    <p>ラウンド<span>{props.activeRound}</span><br />から解禁</p>
+                </div> :
+                null
+            }
+            {props.children}
         </li>
     );
 };

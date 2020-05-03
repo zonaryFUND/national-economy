@@ -9,3 +9,13 @@ export function getCurrentPlayer(game: Game): Player | undefined {
 export function maxWorkers(player: Player): number {
     return 5 + player.buildings.filter(b => b.card == "社宅").length;
 }
+
+export function playerAffected(on: Game, to: Player): Game {
+    return {
+        ...on,
+        board: {
+            ...on.board,
+            players: on.board.players.map(p => p.id == to.id ? to : p)
+        }
+    };
+}

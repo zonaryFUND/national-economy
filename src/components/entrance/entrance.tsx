@@ -12,7 +12,8 @@ const entrance: React.FC<Props> = props => {
     const [ingame, error] = useObservable(props.fetchIngame());
 
     if (ingame == true) {
-        return <Room />;
+        //return <Room />;
+        return null;
     } else if (ingame == false) {
         return <Start />;
     } else {

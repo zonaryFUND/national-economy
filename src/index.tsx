@@ -2,7 +2,7 @@ import * as React from "react";
 import { render } from "react-dom";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import firebase from "firebase";
-import Room from "components/room/room";
+import Room from "components/room/standalone";
 import * as style from "./main.styl";
 
 const db = firebase.initializeApp({
