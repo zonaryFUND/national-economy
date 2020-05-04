@@ -27,5 +27,5 @@ export function createGame(db: firebase.firestore.Firestore, id: string, game: G
 }
 
 export function finishGame(db: firebase.firestore.Firestore, id: string) {
-    db.collection("rooms").doc(`room${id}`).update({game_id: ""});
+    db.collection("rooms").doc(`room${id}`).update({game_id: "", players: []});
 }

@@ -3,6 +3,7 @@ import { launch } from "model/launch";
 import { GameContext } from "./context/game";
 import Room from "./room";
 import { GatewayContext, GatewayProviderProps } from "./context/gateway";
+import toastr from "toastr";
 
 const standAlone: React.FC = props => {
     const [game, setGame] = React.useState(launch(["test1"]));
@@ -26,11 +27,9 @@ const standAlone: React.FC = props => {
             setLogs(logs.concat(result[1]));
         },
         error: message => {
-            console.log(message);
+            toastr.error(message);
         }
     };
-
-    console.log(game.board)
 
     return (
         <GatewayContext.Provider value={gateway}>

@@ -23,7 +23,6 @@ const entrance: React.FC<Props> = props => {
 
     React.useEffect(() => {
         if (myname) {
-            console.log(myname)
             props.join(props.match.params.id, myname)
             window.addEventListener("beforeunload", () => {
                 props.leave(props.match.params.id, myname);

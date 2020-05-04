@@ -56,11 +56,11 @@ const state: React.FC<GameProps> = props => {
             const name = me ? <span className={s}>あなた</span> : <span className={s}>{`${player.name || player.id}`}</span>;
             switch (exRound[id]) {
                 case "selling":
-                    return <p>{name}は賃金を支払う現金が足りないため、売却する建物を選んでいます</p>;
+                    return <p key={id}>{name}は賃金を支払う現金が足りないため、売却する建物を選んでいます</p>;
                 case "discarding":
-                    return <p>{name}は手札が過剰なため、捨てる手札を選んでいます</p>;
+                    return <p key={id}>{name}は手札が過剰なため、捨てる手札を選んでいます</p>;
                 case "finish":
-                    return <p>{name}はラウンド終了処理を完了しました</p>;
+                    return <p key={id}>{name}はラウンド終了処理を完了しました</p>;
             }
         });
         return (
@@ -101,8 +101,8 @@ const state: React.FC<GameProps> = props => {
             <section className={style.state}>
                 <h3>{`${result.winner}の勝利！`}</h3>
                 <table>
-                    {header}
-                    {table}
+                    <thead>{header}</thead>
+                    <tbody>{table}</tbody>
                 </table>
             </section>
         );

@@ -2,7 +2,6 @@ import * as React from "react";
 import { render } from "react-dom";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import firebase from "firebase";
-import Room from "components/room/standalone";
 import * as style from "./main.styl";
 import Entrance from "components/entrance/entrance";
 import { fetchRoom, joinRoom, leaveRoom, createGame, rooms, finishGame } from "repository/room";
@@ -11,7 +10,9 @@ import { fetchGame, updateGame, seat } from "repository/game";
 import { Game } from "model/protocol/game/game";
 import { EffectLog } from "model/interaction/game/sync-effect";
 import Lobby from "components/lobby/lobby";
-import lobby from "components/lobby/lobby";
+import StandAlone from "components/room/standalone";
+import toastr from "toastr";
+import ".//../node_modules/toastr/build/toastr.css"
 
 const db = firebase.initializeApp({
     apiKey: "AIzaSyB-Ww7NS84kvCLDqN30SgIQEpGJA_P4Vfo",
@@ -22,6 +23,11 @@ const db = firebase.initializeApp({
     messagingSenderId: "325582944751",
     appId: "1:325582944751:web:07463ea981e906fdfa1e1a"
   }).firestore();
+
+toastr.options = {
+    "positionClass": "toast-top-center",
+    "closeButton": true
+};
 
 const App: React.FC = () => {
     React.useEffect(() => {
@@ -37,6 +43,9 @@ const App: React.FC = () => {
     return (
         <Router>
             <Switch>
+                <Route path="/standalone">
+                    <StandAlone />
+                </Route>
                 <Route path="/:id">
                     <FireContext.Provider value={fire}>
                         <Entrance 
