@@ -36,7 +36,7 @@ const hand: React.FC<GameProps & GatewayProps> = props => {
 
     const [command, selectionMax] = (() => {
         if (discarding) {
-            const amount = me.buildings.filter(b => b.card == "倉庫").length * 4 + 5 - me.hand.length;
+            const amount = me.hand.length - me.buildings.filter(b => b.card == "倉庫").length * 4 - 5;
             const onDone = () => {
                 props.discard(selected);
                 reset();
@@ -148,7 +148,7 @@ const hand: React.FC<GameProps & GatewayProps> = props => {
 
 
     const cards = me.hand.map((c, i) => {
-        const onClick = currentEffect == undefined || built.includes(i) ? undefined : () => {
+        const onClick = selectionMax == 0 || built.includes(i) ? undefined : () => {
             if (selected.includes(i)) setSelected(selected.filter(e => e != i));
             else if (selected.length == 1 && selectionMax == 1) {
                 setSelected([i]);

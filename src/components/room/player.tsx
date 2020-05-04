@@ -5,10 +5,7 @@ import { calcScore } from "model/interaction/game/score";
 import { GameProps, withGame } from "./context/game";
 import { PlayerIdentifier } from "model/protocol/game/player";
 import { InRoundState } from "model/protocol/game/state";
-const cards = require("public/cards.svg");
-const worker = require("public/worker.svg");
-const report = require("public/report.svg");
-const blank = require("public/blank.svg");
+import { SeatContext, SeatProps } from "./fire";
 const money = require("public/money.svg");
 const star = require("public/star.svg");
 const angry = require("public/angry.svg");
@@ -18,6 +15,27 @@ interface Props extends GameProps {
 }
 
 const player: React.FC<Props> = props => {
+    const Seat: React.FC<SeatProps> = seat => {
+        const onSeat = () => {
+            seat.seat((document.getElementById("name") as HTMLInputElement).value, props.id);
+        };
+    
+        const onNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+            (document.getElementById("seat") as HTMLButtonElement).disabled = e.target.value.length == 0;
+        };
+
+        React.useEffect(() => {
+            (document.getElementById("seat") as HTMLButtonElement).disabled = true;
+        }, []);
+    
+        return (
+            <>
+                <input id="name" onChange={onNameChange} />
+                <button onClick={onSeat} id="seat">着席</button>
+            </>
+        );
+    };
+
     const colorStyle = (() => {
         switch (props.id) {
             case "red":     return style.red;
@@ -40,9 +58,14 @@ const player: React.FC<Props> = props => {
 
     const CWorker: React.FC<{status?: WorkerStatus}> = w => <Worker owner={shown.id} status={w.status} />;
 
+
+
     return (
         <li className={`${style.player} ${colorStyle}` + (isCurrent ? ` ${style.current}` : "")}>
-            <h2><p>{shown.name || ""}</p>{isStart ? <p className={style.start}>スタートプレイヤー</p> : null}</h2>
+            <h2>
+                {shown.name ? <p>{shown.name}</p> : <SeatContext.Consumer>{context => <Seat {...context!} />}</SeatContext.Consumer>}
+                {isStart ? <p className={style.start}>スタートプレイヤー</p> : null}
+            </h2>
             <section className={style.hand}>
                 <h3>手札</h3>
                 <p>{handBuilding} <span>建物</span> + {consumerGoods} <span>消費財</span> / {handMax} <span>上限</span></p>

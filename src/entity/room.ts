@@ -1,4 +1,4 @@
 export interface Room {
-    name: string;
+    game_id: string;
     players: string[];
 }

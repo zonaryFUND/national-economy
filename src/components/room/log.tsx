@@ -6,7 +6,7 @@ interface Props {
 }
 
 const log: React.FC<Props> = props => {
-    const logs = props.logs.map((l, i) => (
+    const logs = props.logs?.map((l, i) => (
         <li key={i}>
             <p>{l}</p>
         </li>

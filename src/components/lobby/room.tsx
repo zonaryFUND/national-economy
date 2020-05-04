@@ -1,8 +1,13 @@
 import * as React from "react";
 import { Room } from "entity/room";
 
-const room: React.FC<Room> = props => {
-    const playerNodes = props.players.map(p => (
+interface Props {
+    name: string;
+    room: Room;
+}
+
+const room: React.FC<Props> = props => {
+    const playerNodes = props.room.players?.map(p => (
         <li>
             <p>{p}</p>
         </li>
@@ -10,7 +15,9 @@ const room: React.FC<Room> = props => {
 
     return (
         <section>
-            <header><h3>{props.name}</h3></header>
+            <header><h2>{props.name}</h2></header>
+            {props.room.game_id ? <p>GameID: {props.room.game_id}</p> : <p>空き</p>}
+            <h3>参加者</h3>
             <ul>
                 {playerNodes}
             </ul>
