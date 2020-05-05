@@ -9,7 +9,7 @@ export function launch(players: string[], lineup?: "original" | "mecenat" | "glo
     const attendants = ids.slice(0, players.length).sort(_ => Math.random());
     const deck = fisherYatesShuffle(originalDeck);
 
-    const p: {[index: number]: Player} = attendants.reduce((prev, id, i) => {
+    const p: {[index: number]: Player} = fisherYatesShuffle(attendants).reduce((prev, id, i) => {
         const player: Player = {
             id: id,
             name: players[i],
