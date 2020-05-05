@@ -51,7 +51,7 @@ const config: webpack.Configuration = {
                 ]
             },
             {
-                test: /\.(png|svg)$/,
+                test: /\.(png|svg|mp3)$/,
                 loader: "file-loader",
                 options: {
                     name: "[name].[ext]",
@@ -78,7 +78,7 @@ const config: webpack.Configuration = {
         clientLogLevel: "debug",
     },
     resolve: {
-        extensions: [".ts", ".tsx", ".js", ".jsx", ".wav", ".opus", ".svg", ".flac"],
+        extensions: [".ts", ".tsx", ".js", ".jsx", ".wav", ".opus", ".svg", ".mp3"],
         modules: [path.resolve(__dirname, "src"), "node_modules"]
     }
 };

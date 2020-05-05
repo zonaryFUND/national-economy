@@ -13,6 +13,11 @@ const angry = require("public/angry.svg");
 const man = require("public/man.svg");
 const star = require("public/star.svg");
 
+const turnStart = require("public/turn.mp3");
+const roundStart = require("public/round-start.mp3");
+const roundEnd = require("public/round-end.mp3");
+const finish = require("public/finish.mp3");
+
 function nameStyle(id: PlayerIdentifier): string {
     switch (id) {
         case "red":     return style.red;
@@ -22,11 +27,31 @@ function nameStyle(id: PlayerIdentifier): string {
     }
 }
 
+function usePrevious<T>(value: T): (T | undefined) {
+    const ref = React.useRef<T | undefined>();
+    React.useEffect(() => {
+        ref.current = value;
+    });
+
+    return ref.current;
+}
+
 const state: React.FC<GameProps & GatewayProps> = props => {
+    const previousGame = usePrevious(props.game);
+
     const inRound = props.game.state as InRoundState;
     if (inRound.currentPlayer) {
         const current = getCurrentPlayer(props.game)!;
         const currentMe = current.id == props.me;
+
+        if (previousGame == undefined || (previousGame.state as ExRoundState).red != undefined) {
+            new Audio(roundStart).play();
+        }
+
+        if (currentMe && inRound.effecting == undefined) {
+            new Audio(turnStart).play();
+        }
+
         const turn = <><span className={nameStyle(current.id)}>{currentMe ? "あなた" : `${current.name || current.id}`}</span>のターンです</>;
         const detail = (() => {
             if (inRound.phase == "dispatching") return <p>{"労働者の派遣先を選んで" + (currentMe ? "ください" : "います")}</p>;
@@ -51,6 +76,10 @@ const state: React.FC<GameProps & GatewayProps> = props => {
     const players = Object.values(props.game.board.players);
     const exRound = props.game.state as ExRoundState;
     if (exRound["red"] != undefined) {
+        if (previousGame && (previousGame.state as InRoundState).currentPlayer != undefined) {
+            new Audio(roundEnd).play();
+        }
+
         const status = Object.keys(exRound).map(id => {
             const me = id == props.me;
             const player = players.find(p => p.id == id)!;
@@ -82,6 +111,8 @@ const state: React.FC<GameProps & GatewayProps> = props => {
 
     const result = props.game.state as ResultState;
     if (result.winner) {
+        new Audio(finish).play();
+
         const header = (
             <tr>
                 <th>名前</th>
@@ -96,13 +127,13 @@ const state: React.FC<GameProps & GatewayProps> = props => {
         const table = players.map(player => {
             const score = calcScore(player);
             const rank = (() => {
-                if (score.total >= 150) return "世界有数の時価総額";
-                if (score.total >= 125) return "ハイテク分野に進出し業界最大シェア";
-                if (score.total >= 100) return "一部上場企業として存続";
-                if (score.total >= 75) return "地元自治体で「最も就職したい企業」に";
-                if (score.total >= 50) return "民事再生を経て同業他社により買収";
-                if (score.total >= 25) return "不正会計が発覚し破綻";
-                return "評価なし";
+                if (score.total >= 150) return "S：世界有数の時価総額";
+                if (score.total >= 125) return "A：ハイテク分野に進出し業界最大シェア";
+                if (score.total >= 100) return "B：一部上場企業として存続";
+                if (score.total >= 75) return "C：地元自治体で「最も就職したい企業」に";
+                if (score.total >= 50) return "D：民事再生を経て同業他社により買収";
+                if (score.total >= 25) return "E：不正会計が発覚し破綻";
+                return "F：評価なし";
             })();
             return (
                 <tr className={nameStyle(player.id)}>
