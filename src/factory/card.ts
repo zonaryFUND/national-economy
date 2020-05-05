@@ -3,6 +3,7 @@ import { Farm, SlashAndBurn, DesignOffice, Cafe, Orchard, Factory, ConstructionC
 import { Quarry, Mine, School, Carpenter, Stall, StallMulti, Market, MarketMulti, HighSchool, Supermarket, SupermarketMulti, University, DepartmentStore, DepartmentStoreMulti, Collage, InternationalExposition, InternationalExpositionMulti } from "./public-estate";
 import { ConsumerGoods } from "./consumer-goods";
 import { CardName } from "model/protocol/game/card";
+import { VegetableGarden, Ironworks, Lottery, AmusementPark, PotatoField, TouristRanch, BuildingCompany, Laboratory, FoodFactory, Brewery, EarthConstruction, PetroleumComplex, Cathedral, TempleCarpenter, Shipyard, IndustrialPark, Cafeteria, PrefabricatedBuilder, Nursery, OldTown, AccountingFirm, Graveyard, ExportPort, RailroadStation, InvestmentBank, BotanicalGarden, Museum } from "./mecenat-buildings";
 
 export default function cardFactory(name: CardName, players: number = 2): Card {
     switch (name) {
@@ -59,6 +60,44 @@ export default function cardFactory(name: CardName, players: number = 2): Card {
                         return ChemicalFactory;
         case "二胡市建設":
                         return DoubleConstructor;
+
+        // メセナの建物カード
+        case "菜園":    return VegetableGarden;
+        case "鉄工所":  return Ironworks;
+        case "宝くじ":  return Lottery;
+        case "遊園地":  return AmusementPark;
+        case "芋畑":    return PotatoField;
+        case "観光牧場":
+                        return TouristRanch;
+        case "建築会社":
+                        return BuildingCompany;
+        case "研究所":  return Laboratory;
+        case "食品工場":
+                        return FoodFactory;
+        case "醸造所":  return Brewery;
+        case "地球建設":
+                        return EarthConstruction;
+        case "石油コンビナート":
+                        return PetroleumComplex;
+        case "大聖堂":  return Cathedral;
+        case "宮大工":  return TempleCarpenter;
+        case "造船所":  return Shipyard;
+        case "工業団地":
+                        return IndustrialPark;
+        case "食堂":    return Cafeteria;
+        case "プレハブ工務店":
+                        return PrefabricatedBuilder;
+        case "養殖場":  return Nursery;
+        case "旧市街":  return OldTown;
+        case "会計事務所":
+                        return AccountingFirm;
+        case "墓地":    return Graveyard;
+        case "輸出港":  return ExportPort;
+        case "鉄道駅":  return RailroadStation;
+        case "投資銀行":
+                        return InvestmentBank;
+        case "植物園":  return BotanicalGarden;
+        case "博物館":  return Museum;
 
         // 消費財
         case "消費財":  return ConsumerGoods;

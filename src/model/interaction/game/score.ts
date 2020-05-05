@@ -2,11 +2,15 @@ import { PlayerResult } from "model/protocol/game/state";
 import { Player } from "model/protocol/game/player";
 import cardFactory from "factory/card";
 
+export function victoryTokenScore(token: number): number {
+    return Math.floor(token / 3) * 10 + (token % 3);
+};
+
 export function calcScore(player: Player): PlayerResult {
     const calc = {
         cash: player.cash,
         buildings: player.buildings.map(b => cardFactory(b.card).score || 0).reduce((p, c) => p + c, 0),
-        victoryToken: Math.floor(player.victoryToken / 3) * 10 + (player.victoryToken % 3),
+        victoryToken: victoryTokenScore(player.victoryToken),
         penalty: player.penalty,
         bonus: player.buildings.map(b => {
             const bonus = cardFactory(b.card).bonusScore;

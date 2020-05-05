@@ -4,4 +4,10 @@ type BuildingName = "農場" | "焼畑" | "設計事務所" | "珈琲店" | "果
                     "レストラン" | "開拓民" | "不動産屋" | "製鉄所" | "ゼネコン" |
                     "農協" | "労働組合" | "自動車工場" | "鉄道" | "本社ビル" | 
                     "社宅" | "邸宅" | "化学工場" | "二胡市建設";
-export type CardName = PublicBuildingName | BuildingName | "消費財";
+type MecenatBuildingName = "菜園" | "鉄工所" | "宝くじ" | "遊園地" | "芋畑" |
+                           "観光牧場" | "建築会社" | "研究所" | "食品工場" | "醸造所" |
+                           "地球建設" | "石油コンビナート" | "大聖堂" | "宮大工" | "造船所" |
+                           "工業団地" | "食堂" | "プレハブ工務店" | "養殖場" | "旧市街" |
+                           "会計事務所" | "墓地" | "輸出港" | "鉄道駅" | "投資銀行" |
+                           "植物園" | "博物館";
+export type CardName = PublicBuildingName | BuildingName | MecenatBuildingName | "消費財";

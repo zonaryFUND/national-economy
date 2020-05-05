@@ -7,6 +7,10 @@ export interface Card {
     name: CardName;
     type: "public" | "building" | "consumer-goods"
     cost: number | undefined;
+    costReduction?: {
+        description: string;
+        to: (player: Player) => number;
+    };
     imageURL: string;
     description: string;
     buildingType: BuildingType[];
