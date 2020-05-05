@@ -4,7 +4,7 @@ import { turnAround } from "./turn";
 import { roundCleanup, resolveSelling, cleanupEndBoundary, resolveDiscarding, isLegalSelling } from "./cleanup";
 import { lift } from "./state-components";
 import { AsyncResolver } from "./async-command";
-import { InRoundState } from "model/protocol/game/state";
+import { InRoundState, ExRoundState } from "model/protocol/game/state";
 import { cardEffect, AsyncCardEffect } from "./card-effects";
 import { PlayerIdentifier } from "model/protocol/game/player";
 import { endRound } from "./end-round";
@@ -12,6 +12,7 @@ import { finish } from "./finish";
 import { CardName } from "model/protocol/game/card";
 import { SyncEffect, EffectLog } from "./sync-effect";
 import { fisherYatesShuffle } from "model/shuffle";
+import State from "monad/state/state";
 
 export function randomIO(game: Game): GameIO {
     return {
@@ -55,6 +56,17 @@ const Gateway = (game: Game) => {
         cleanupDiscard: (id: PlayerIdentifier, disposed: number[]) => {
             const state = resolveDiscarding(id, disposed).flatMap(log => cleanupBoundary.map(ln => log.concat(ln)));
             const result = state.run(game);
+            return [result[1], result[0]] as [Game, EffectLog];
+        },
+        cleanupConfirm: (id: PlayerIdentifier) => {
+            const to: Game = {
+                ...game,
+                state: {
+                    ...(game.state as ExRoundState),
+                    [id]: "finish"
+                }
+            };
+            const result = State.put(to).flatMap(_ => cleanupBoundary).run(game);
             return [result[1], result[0]] as [Game, EffectLog];
         }
     };

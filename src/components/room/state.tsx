@@ -6,6 +6,7 @@ import { cardEffect, AsyncCardEffect } from "model/interaction/game/card-effects
 import { GameProps, withGame } from "./context/game";
 import { PlayerIdentifier } from "model/protocol/game/player";
 import { calcScore } from "model/interaction/game/score";
+import { GatewayProps, withGateway } from "./context/gateway";
 const money = require("public/money.svg");
 const building = require("public/architecture-and-city.svg");
 const angry = require("public/angry.svg");
@@ -21,7 +22,7 @@ function nameStyle(id: PlayerIdentifier): string {
     }
 }
 
-const state: React.FC<GameProps> = props => {
+const state: React.FC<GameProps & GatewayProps> = props => {
     const inRound = props.game.state as InRoundState;
     if (inRound.currentPlayer) {
         const current = getCurrentPlayer(props.game)!;
@@ -60,6 +61,13 @@ const state: React.FC<GameProps> = props => {
                     return <p key={id}>{name}は賃金を支払う現金が足りないため、売却する建物を選んでいます</p>;
                 case "discarding":
                     return <p key={id}>{name}は手札が過剰なため、捨てる手札を選んでいます</p>;
+                case "confirm":
+                    return (
+                        <>
+                            <p key={id}>{name}はラウンド終了処理を完了しました(確認待ち)</p>
+                            <button onClick={props.confirmCleanup}>OK</button>
+                        </>
+                    );
                 case "finish":
                     return <p key={id}>{name}はラウンド終了処理を完了しました</p>;
             }
@@ -123,4 +131,4 @@ const state: React.FC<GameProps> = props => {
     return null;
 };
 
-export default withGame(state);
+export default withGateway(withGame(state));

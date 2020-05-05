@@ -18,8 +18,9 @@ export const roundCleanup: State<Game, EffectLog> = State
                 prev.flatMap(log => current.map(ln => log.concat(...ln))), 
                 startBoard);
 
+        console.log(statusAndEffect)
         const state: ExRoundState = Object.values(game.board.players)
-            .map((p, i) => ({[p.id]: statusAndEffect[i].status}))
+            .map((p, i) => ({[p.id]: statusAndEffect[i].status == "finish" ? "confirm" : statusAndEffect[i].status}))
             .reduce((prev, current) => ({...prev, ...current}));
 
         return onBoard(effect).modify(g => ({...g, state: state}));

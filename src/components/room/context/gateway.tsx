@@ -18,6 +18,7 @@ export interface GatewayProps {
     resolve: (resolver: AsyncResolver) => void;
     sell: (indices: number[]) => boolean;
     discard: (indices: number[]) => void;
+    confirmCleanup: () => void;
 }
 
 function toConsumer(game: Game, provider: GatewayProviderProps, me?: PlayerIdentifier): GatewayProps {
@@ -62,12 +63,18 @@ function toConsumer(game: Game, provider: GatewayProviderProps, me?: PlayerIdent
         provider.update(Gateway(game).cleanupDiscard(me, indices));
     }
 
+    const confirmCleanup = () => {
+        if (me == undefined) return;
+        provider.update(Gateway(game).cleanupConfirm(me));
+    };
+
     return {
         fetch: fetch,
         validate: validate,
         resolve: resolve,
         sell: sell,
-        discard: discard
+        discard: discard,
+        confirmCleanup: confirmCleanup
     };
 }
 

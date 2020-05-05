@@ -4,6 +4,8 @@ import { GameContext } from "./context/game";
 import Room from "./room";
 import { GatewayContext, GatewayProviderProps } from "./context/gateway";
 import toastr from "toastr";
+import { Game } from "model/protocol/game/game";
+import { ExRoundState } from "model/protocol/game/state";
 
 const standAlone: React.FC = props => {
     const [game, setGame] = React.useState(launch(["test1"]));

@@ -68,8 +68,8 @@ describe("ラウンド終了時クリーンアップ", () => {
             board: {
                 ...bed.board,
                 houseHold: 51,
-                players: [
-                    {
+                players: {
+                    0: {
                         ...TestPlayerRed,
                         cash: 11,
                         workers: {
@@ -78,7 +78,7 @@ describe("ラウンド終了時クリーンアップ", () => {
                             employed: 3
                         }
                     },
-                    {
+                    1: {
                         ...TestPlayerBlue,
                         cash: 8,
                         workers: {
@@ -87,7 +87,7 @@ describe("ラウンド終了時クリーンアップ", () => {
                             employed: 4
                         }
                     },
-                    {
+                    2: {
                         ...TestPlayerRed,
                         cash: 5,
                         id: "orange",
@@ -97,7 +97,7 @@ describe("ラウンド終了時クリーンアップ", () => {
                             employed: 5
                         }
                     },
-                    {
+                    3: {
                         ...TestPlayerRed,
                         cash: 5,
                         hand: ["農場", "農場", "農場", "農場", "農場", "農場"],
@@ -108,12 +108,12 @@ describe("ラウンド終了時クリーンアップ", () => {
                             employed: 5
                         }
                     }
-                ]
+                }
             },
             state: {
-                red: "finish",
-                blue: "finish",
-                orange: "finish",
+                red: "confirm",
+                blue: "confirm",
+                orange: "confirm",
                 purple: "discarding"
             }
         }
@@ -125,14 +125,14 @@ describe("ラウンド終了時クリーンアップ", () => {
             ...BlankBed,
             board: {
                 ...BlankBed.board,
-                players: [
-                    {
+                players: {
+                    0: {
                         ...TestPlayerRed,
                         cash: 1,
                         buildings: [{card: "不動産屋", workersOwner: []}],
                         workers: {available: 0, training: 0, employed: 2}
                     }
-                ]
+                }
             }
         };
         const result = roundCleanup.run(bed);
@@ -144,17 +144,17 @@ describe("ラウンド終了時クリーンアップ", () => {
             board: {
                 ...bed.board,
                 houseHold: 1,
-                players: [
-                    {
+                players: {
+                    0: {
                         ...TestPlayerRed,
                         buildings: [{card: "不動産屋", workersOwner: []}],
                         workers: {available: 0, training: 0, employed: 2},
                         penalty: 3
                     }
-                ]
+                }
             },
             state: {
-                red: "finish"
+                red: "confirm"
             }
         };
         assert.deepEqual(result[1], expected, "盤面変化が異なる")
@@ -165,8 +165,8 @@ describe("ラウンド終了時クリーンアップ", () => {
         board: {
             ...BlankBed.board,
             currentRound: 5,
-            players: [
-                {
+            players: {
+                0: {
                     ...TestPlayerRed,
                     cash: 1,
                     workers: {available: 0, training: 0, employed: 5},
@@ -179,7 +179,7 @@ describe("ラウンド終了時クリーンアップ", () => {
                         {card: "工場", workersOwner: []}
                     ]
                 }
-            ]
+            }
         },
         state: {
             red: "selling"
@@ -222,8 +222,8 @@ describe("ラウンド終了時クリーンアップ", () => {
                     {card: "農場", workersOwner: []},
                     {card: "農場", workersOwner: []},
                 ],
-                players: [
-                    {
+                players: {
+                    0: {
                         ...TestPlayerRed,
                         cash: 4,
                         workers: {available: 0, training: 0, employed: 5},
@@ -233,7 +233,7 @@ describe("ラウンド終了時クリーンアップ", () => {
                             {card: "工場", workersOwner: []}
                         ]
                     }
-                ]
+                }
             },
             state: {
                 red: "finish"
@@ -245,14 +245,14 @@ describe("ラウンド終了時クリーンアップ", () => {
         ...BlankBed,
         board: {
             ...BlankBed.board,
-            players: [
-                {
+            players: {
+                0: {
                     ...TestPlayerRed,
                     cash: 10,
                     workers: {available: 0, training: 0, employed: 2},
                     hand: ["化学工場", "消費財", "工場", "本社ビル", "珈琲店", "設計事務所", "農場"]
                 }
-            ]
+            }
         }
     };
 
@@ -266,12 +266,12 @@ describe("ラウンド終了時クリーンアップ", () => {
             board: {
                 ...discardingBed.board,
                 houseHold: 4,
-                players: [
-                    {
+                players: {
+                    0: {
                         ...discardingBed.board.players[0],
                         cash: 6
                     }
-                ]
+                }
             },
             state: {
                 red: "discarding"
@@ -284,12 +284,12 @@ describe("ラウンド終了時クリーンアップ", () => {
             ...discardingBed,
             board: {
                 ...discardingBed.board,
-                players: [
-                    {
+                players: {
+                    0: {
                         ...discardingBed.board.players[0],
                         buildings: [{card: "倉庫", workersOwner: []}]
                     }
-                ]
+                }
             }
         }
         const result = roundCleanup.run(bed);
@@ -298,32 +298,38 @@ describe("ラウンド終了時クリーンアップ", () => {
             board: {
                 ...bed.board,
                 houseHold: 4,
-                players: [
-                    {
+                players: {
+                    0: {
                         ...bed.board.players[0],
                         cash: 6
                     }
-                ]
+                }
             },
             state: {
-                red: "finish"
+                red: "confirm"
             }
         }, "盤面変化が異なる");
     });
 
     it("捨て札を確定させる", () => {
-        const result = resolveDiscarding("red", [1, 3]).run(discardingBed);
+        const bed: Game = {
+            ...discardingBed,
+            state: {
+                red: "discarding"
+            }
+        };
+        const result = resolveDiscarding("red", [1, 3]).run(bed);
         assert.deepEqual(result[0], ["redが手札から本社ビル、消費財1枚を捨てました"], "ログが異なる");
         assert.deepEqual(result[1], {
             board: {
                 ...discardingBed.board,
                 trash: ["本社ビル"],
-                players: [
-                    {
+                players: {
+                    0: {
                         ...discardingBed.board.players[0],
                         hand: ["化学工場", "工場", "珈琲店", "設計事務所", "農場"]
                     }
-                ]
+                }
             },
             state: {
                 red: "finish"

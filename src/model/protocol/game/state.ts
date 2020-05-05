@@ -8,7 +8,7 @@ export interface InRoundState {
     revealing?: CardName[]
 }
 
-export type ExRoundPlayerStatus = "selling" | "discarding" | "finish";
+export type ExRoundPlayerStatus = "selling" | "discarding" | "confirm" | "finish";
 export type ExRoundState = {[key: string]: ExRoundPlayerStatus};
 
 export interface PlayerResult {
