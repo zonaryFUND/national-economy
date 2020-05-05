@@ -14,7 +14,7 @@ function makePublicCard(name: CardName, imageURL: string, description: string): 
 }
 
 function makeMulti(card: Card): Card {
-    return {...card, description: card.description + "\n何人でもこの職場を使える"};
+    return {...card, description: card.description + "\n何人でもこの職場を使える", canAcceptMultiWorkers: true};
 }
 
 export const Quarry = makePublicCard(
@@ -23,11 +23,14 @@ export const Quarry = makePublicCard(
     "カードを1枚引く\nスタートプレイヤーになる"
 );
 
-export const Mine = makePublicCard(
+export const Mine: Card = {
+    ...makePublicCard(
     "鉱山",
     "https://2.bp.blogspot.com/-iM2T8SxNcFQ/VlAZE3VoJBI/AAAAAAAA030/-1TaJ1OsRqg/s450/job_sekitan_horu.png",
     "カードを1枚引く\n何人でもこの職場を使える"
-);
+    ),
+    canAcceptMultiWorkers: true
+};
 
 
 export const School = makePublicCard(

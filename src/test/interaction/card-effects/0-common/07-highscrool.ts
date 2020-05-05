@@ -1,7 +1,8 @@
 import "mocha";
-import { available, BlankBed, TestPlayerRed, unavailable, playerAffected, assertAffect } from "../../bed";
+import { available, BlankBed, TestPlayerRed, unavailable, assertAffect } from "../../bed";
 import { cardEffect } from "model/interaction/game/card-effects";
 import { Player } from "model/protocol/game/player";
+import { playerAffected } from "model/interaction/game/util";
 
 describe("高等学校", () => {
     const highschool = cardEffect("高等学校");

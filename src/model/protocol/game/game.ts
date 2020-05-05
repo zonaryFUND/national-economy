@@ -14,5 +14,5 @@ export interface GameIO {
 
 export function getCurrentPlayer(game: Game): Player | undefined {
     const id = (game.state as InRoundState).currentPlayer;
-    return id ? game.board.players.find(p => p.id == id) : undefined;
+    return id ? Object.values(game.board.players).find(p => p.id == id) : undefined;
 }

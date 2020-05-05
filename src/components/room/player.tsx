@@ -45,7 +45,7 @@ const player: React.FC<Props> = props => {
         }
     })();
 
-    const shown = props.game.board.players.find(p => p.id == props.id)!;
+    const shown = Object.values(props.game.board.players).find(p => p.id == props.id)!;
 
     const handBuilding = shown.hand.filter(c => c != "消費財").length;
     const consumerGoods = shown.hand.length - handBuilding;

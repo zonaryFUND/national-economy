@@ -8,7 +8,7 @@ import { GatewayProps, withGateway } from "../context/gateway";
 import cardFactory from "factory/card";
 
 const estates: React.FC<GameProps & GatewayProps> = props => {
-    const me = props.game.board.players.find(p => p.id == props.me)!;
+    const me = Object.values(props.game.board.players).find(p => p.id == props.me)!;
 
     const fetching = isWaitingFetch(props);
     const onFetch = (index: number) => () => props.fetch("occupied", index);

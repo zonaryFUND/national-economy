@@ -1,7 +1,7 @@
 import * as React from "react";
 import { render } from "react-dom";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import firebase from "firebase";
+import firebase from "firebase/app";
 import * as style from "./main.styl";
 import Entrance from "components/entrance/entrance";
 import { fetchRoom, joinRoom, leaveRoom, createGame, rooms, finishGame } from "repository/room";
@@ -37,11 +37,11 @@ const App: React.FC = () => {
     const fire: FireProps = {
         observable: id => fetchGame(db, id),
         update: id => (result: [Game, EffectLog]) => updateGame(db, id)({...result[0], log: result[1]}),
-        seat: (id, players) => seat(db, id, players)
+        seat: (id, index, name) => seat(db, id, index, name)
     };
 
     return (
-        <Router>
+        <Router basename="/naconomy">
             <Switch>
                 <Route path="/standalone">
                     <StandAlone />

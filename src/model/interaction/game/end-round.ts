@@ -13,8 +13,9 @@ export function endRound(finish: State<Game, EffectLog>): State<Game, EffectLog>
         .flatMap(game => {
             if (game.board.currentRound == 9) return finish;
 
-            const start = game.board.players.find(p => p.id == game.board.startPlayer);
-            const trainingDone = game.board.players
+            const players = Object.values(game.board.players);
+            const start = players.find(p => p.id == game.board.startPlayer);
+            const trainingDone = players
                 .filter(p => p.workers.training > 0)
                 .map(p => `${p.name || p.id}の新入社員${p.workers.training}人が研修を終えました`)
 
@@ -24,7 +25,7 @@ export function endRound(finish: State<Game, EffectLog>): State<Game, EffectLog>
                     board: {
                         ...game.board,
                         currentRound: game.board.currentRound + 1,
-                        players: game.board.players.map(player => ({
+                        players: players.map(player => ({
                             ...player,
                             workers: {
                                 available: player.workers.employed,

@@ -24,7 +24,7 @@ const worker: React.FC<Props> = props => {
         switch (props.status) {
             case "fetched":     return "派遣済みの労働者です。";
             case "onestate":    
-                const player = props.game.board.players.find(p => p.id == props.owner);
+                const player = Object.values(props.game.board.players).find(p => p.id == props.owner);
                 return `${player?.name || props.owner}が派遣した労働者です。`;
             case "training":    return "研修中の労働者です。派遣はできませんが、賃金は満額発生します。";
             case "empty":       return "空席です。この数だけ労働者を追加雇用できます。";

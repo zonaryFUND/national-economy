@@ -23,14 +23,23 @@ const entrance: React.FC<Props> = props => {
 
     React.useEffect(() => {
         if (myname) {
-            props.join(props.match.params.id, myname)
-            window.addEventListener("beforeunload", () => {
-                props.leave(props.match.params.id, myname);
-            });
+            const leave = () => {
+                if (myname) props.leave(props.match.params.id, myname);
+            };
+
+            props.join(props.match.params.id, myname);
+            window.addEventListener("beforeunload", leave);
+
+            return () => {
+                leave();
+                window.removeEventListener("beforeunload", leave);
+            };
         }
+
+        return () => {};
     }, [myname]);
 
-    if (room && room.game_id == "") {
+    if (room && !room.game_id) {
         const players = room.players.map(p => <li key={p}>{p}</li>);
 
         const onJoin = () => {

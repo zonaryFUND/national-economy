@@ -1,7 +1,8 @@
 import "mocha";
 import { cardEffect } from "model/interaction/game/card-effects";
 import { Player } from "model/protocol/game/player";
-import { TestPlayerRed, available, playerAffected, BlankBed, unavailable, asyncResolveFail, assertAffectResolve, TestPlayerBlue } from "../../bed";
+import { TestPlayerRed, available, BlankBed, unavailable, asyncResolveFail, assertAffectResolve, TestPlayerBlue } from "../../bed";
+import { playerAffected } from "model/interaction/game/util";
 
 describe("大工", () => {
     const carpenter = cardEffect("大工");

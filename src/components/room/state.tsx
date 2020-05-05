@@ -47,11 +47,12 @@ const state: React.FC<GameProps> = props => {
         )
     };
 
+    const players = Object.values(props.game.board.players);
     const exRound = props.game.state as ExRoundState;
     if (exRound["red"] != undefined) {
         const status = Object.keys(exRound).map(id => {
             const me = id == props.me;
-            const player = props.game.board.players.find(p => p.id == id)!;
+            const player = players.find(p => p.id == id)!;
             const s = nameStyle(id as PlayerIdentifier);
             const name = me ? <span className={s}>あなた</span> : <span className={s}>{`${player.name || player.id}`}</span>;
             switch (exRound[id]) {
@@ -83,7 +84,7 @@ const state: React.FC<GameProps> = props => {
                 <th><img src={star} />スコア</th>
             </tr>
         );
-        const table = props.game.board.players.map(player => {
+        const table = players.map(player => {
             const score = calcScore(player);
             return (
                 <tr className={nameStyle(player.id)}>

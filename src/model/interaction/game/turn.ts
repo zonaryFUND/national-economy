@@ -7,7 +7,8 @@ export function turnAround(cleanup: State<Game, EffectLog>): State<Game, EffectL
     return State
         .get<Game>()
         .flatMap(game => {
-            const availables = game.board.players.map(p => p.workers.available);
+            const players = Object.values(game.board.players);
+            const availables = players.map(p => p.workers.available);
             if (availables.filter(w => w > 0).length == 0) {
                 return State
                     .put(game)
@@ -16,9 +17,9 @@ export function turnAround(cleanup: State<Game, EffectLog>): State<Game, EffectL
                     );
             }
 
-            const currentIndex = game.board.players.findIndex(p => p.id == (game.state as InRoundState).currentPlayer);
-            const nextIndex = (currentIndex + 1) % game.board.players.length; 
-            const next = game.board.players.slice(nextIndex).concat(game.board.players.slice(0, nextIndex))
+            const currentIndex = players.findIndex(p => p.id == (game.state as InRoundState).currentPlayer);
+            const nextIndex = (currentIndex + 1) % players.length; 
+            const next = players.slice(nextIndex).concat(players.slice(0, nextIndex))
                 .filter(p => p.workers.available > 0)
                 [0].id;
 

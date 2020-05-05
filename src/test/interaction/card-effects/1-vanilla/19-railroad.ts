@@ -1,5 +1,6 @@
-import { assertUnavailable, TestPlayerRed, assertBonus, playerAffected, BlankBed } from "../../bed";
+import { assertUnavailable, TestPlayerRed, assertBonus, BlankBed } from "../../bed";
 import { Player } from "model/protocol/game/player";
+import { playerAffected } from "model/interaction/game/util";
 
 describe("鉄道", () => {
     it("職場としては使用できない", () => {

@@ -124,8 +124,9 @@ export function fetchable(to: "occupied" | "public" | "sold", index: number): St
                 }
             })();
 
-            if (target.workersOwner.length > 0 && !cardFactory(target.card, game.board.players.length).canAcceptMultiWorkers) {
-                const autochthon = game.board.players.find(p => p.id == target.workersOwner[0])!;
+            const players = Object.values(game.board.players);
+            if (target.workersOwner.length > 0 && !cardFactory(target.card, players.length).canAcceptMultiWorkers) {
+                const autochthon = players.find(p => p.id == target.workersOwner[0])!;
                 return `すでに${autochthon.name || autochthon.id}の労働者が働いています`;
             }
             

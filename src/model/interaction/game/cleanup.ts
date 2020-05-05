@@ -10,7 +10,7 @@ import { onBoard, removeFromHand } from "./state-components";
 export const roundCleanup: State<Game, EffectLog> = State
     .get<Game>()
     .flatMap(game => {
-        const statusAndEffect = game.board.players.map(p => playerCleanup(p, wage(game.board.currentRound)));
+        const statusAndEffect = Object.values(game.board.players).map(p => playerCleanup(p, wage(game.board.currentRound)));
         const startBoard = State.put(game.board).map<EffectLog>(_ => []);
         const effect = statusAndEffect
             .map(se => se.effect)
@@ -18,7 +18,7 @@ export const roundCleanup: State<Game, EffectLog> = State
                 prev.flatMap(log => current.map(ln => log.concat(...ln))), 
                 startBoard);
 
-        const state: ExRoundState = game.board.players
+        const state: ExRoundState = Object.values(game.board.players)
             .map((p, i) => ({[p.id]: statusAndEffect[i].status}))
             .reduce((prev, current) => ({...prev, ...current}));
 
@@ -31,7 +31,7 @@ export function cleanupEndBoundary(endRound: State<Game, EffectLog>): State<Game
         .get<Game>()
         .flatMap(game => {
             const state = game.state as ExRoundState;
-            const states = game.board.players.map(p => state[p.id]);
+            const states = Object.values(game.board.players).map(p => state[p.id]);
 
             if (states.filter(s => s == "finish").length == states.length) {
                 return endRound;
@@ -42,7 +42,7 @@ export function cleanupEndBoundary(endRound: State<Game, EffectLog>): State<Game
 }
 
 export function isLegalSelling(game: Game, id: PlayerIdentifier, sold: number[]): boolean {
-    const player = game.board.players.find(p => p.id == id)!;
+    const player = Object.values(game.board.players).find(p => p.id == id)!;
     const lack = wage(game.board.currentRound) * player.workers.employed - player.cash;
     const values = player.buildings.filter((_, i) => sold.includes(i)).map(b => cardFactory(b.card).score || 0);
     const earned = values.reduce((p, c) => p + c, 0);
@@ -54,7 +54,7 @@ export function resolveSelling(id: PlayerIdentifier, sold: number[]): State<Game
     return State
         .get<Game>()
         .flatMap(game => {
-            const targetPlayer = game.board.players.find(p => p.id == id)!;
+            const targetPlayer = Object.values(game.board.players).find(p => p.id == id)!;
             const soldBuildings = sold.map(i => targetPlayer.buildings[i].card);
             const earnings = soldBuildings.map(c => cardFactory(c).score || 0).reduce((p, c) => p + c, 0);
             
@@ -77,7 +77,7 @@ export function resolveSelling(id: PlayerIdentifier, sold: number[]): State<Game
         .flatMap(log => State
             .get<Game>()
             .flatMap(game => {
-                const targetPlayer = game.board.players.find(p => p.id == id)!;
+                const targetPlayer = Object.values(game.board.players).find(p => p.id == id)!;
                 const cleanup = playerCleanup(targetPlayer, wage(game.board.currentRound));
                 return onBoard(cleanup.effect).modify(g => ({
                     board: g.board,
@@ -95,7 +95,7 @@ export function resolveDiscarding(id: PlayerIdentifier, discarded: number[]): St
     return State
         .get<Game>()
         .flatMap(game => {
-            const targetPlayer = game.board.players.find(p => p.id == id)!;
+            const targetPlayer = Object.values(game.board.players).find(p => p.id == id)!;
             const result = removeFromHand(discarded).run(targetPlayer);        
             const disposedBuidlings = result[0].filter(c => c != "消費財");
             const playerTo: Player = {
@@ -123,9 +123,14 @@ export function resolveDiscarding(id: PlayerIdentifier, discarded: number[]): St
         
 
 function playerAffected(on: Board, player: Player): Board {
+    const index = Object.values(on.players).findIndex(p => p.id == player.id)!;
+
     return {
         ...on,
-        players: on.players.map(p => p.id == player.id ? player : p)
+        players: {
+            ...on.players,
+            [index]: player
+        }
     };
 }
 

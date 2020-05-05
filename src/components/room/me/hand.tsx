@@ -10,7 +10,7 @@ import { GatewayProps, withGateway } from "../context/gateway";
 import cardFactory from "factory/card";
 
 const hand: React.FC<GameProps & GatewayProps> = props => {
-    const me = props.game.board.players.find(p => p.id == props.me)!;
+    const me = Object.values(props.game.board.players).find(p => p.id == props.me)!;
 
     const inRoundState = props.game.state as InRoundState;
     const currentEffect = (() => {

@@ -9,11 +9,12 @@ import { EffectLog } from "model/interaction/game/sync-effect";
 import { PlayerIdentifier, Player } from "model/protocol/game/player";
 import GameAndLog from "entity/gameandlog";
 import { ResultState } from "model/protocol/game/state";
+import toastr from "toastr";
 
 export interface FireProps {
     observable: (id: string) => Observable<GameAndLog>;
     update: (id: string) => (result: [Game, EffectLog]) => void;
-    seat: (id: string, players: Player[]) => void;
+    seat: (id: string, index: number, name: string) => void;
 }
 
 export const FireContext = React.createContext<FireProps | null>(null);
@@ -33,40 +34,42 @@ export const SeatContext = React.createContext<SeatProps | null>(null);
 
 const Inner: React.FC<Props & FireProps> = props => {
     const [game, error] = useObservable(props.observable(props.id));
-    const me = props.myname ? game?.board.players.find(p => p.name == props.myname) : undefined;
+    const me = game && props.myname ? Object.values(game.board.players).find(p => p.name == props.myname) : undefined;
+    const myID = me ? me.id : undefined;
 
     if (game && (game.state as ResultState).winner != undefined) props.onFinish();
 
     const gateway: GatewayProviderProps = {
         update: props.update(props.id),
-        error: message => {}
+        error: message => toastr.error(message)
     };
 
     React.useEffect(() => {
-        if (props.myname) {
-            const remover = () => {
-                const players = game!.board.players.map(p => {
-                    if (p.name == props.myname) return {...p, name: ""};
-                    return p
-                });
-                props.seat(props.id, players);
+        console.log(myID)
+        if (myID) {
+            const leave = (e: BeforeUnloadEvent) => {
+                console.log("leaving")
+                const index = Object.values(game!.board.players).findIndex(p => p.name == props.myname)!;
+                if (index >= 0) props.seat(props.id, index, "");
+                e.returnValue = "ページを離れようとしたので、席から外れました。"
             };
-            window.addEventListener("beforeunload", remover);
+            window.addEventListener("beforeunload", leave);
             return () => {
-                window.removeEventListener("beforeunload", remover);
+                console.log("leaving")
+                const index = Object.values(game!.board.players).findIndex(p => p.name == props.myname)!;
+                if (index >= 0) props.seat(props.id, index, "");
+                window.removeEventListener("beforeunload", leave);
             }
         }
+
         return () => {};
-    }, [props.myname, game]);
+    }, [myID]);
 
     const seat: SeatProps = {
         seat: (name, id) => {
             props.setMyname(name);
-            const players = game!.board.players.map(p => {
-                if (p.id == id) return {...p, name: name};
-                return p
-            });
-            props.seat(props.id, players);
+            const index = Object.values(game!.board.players).findIndex(p => p.id == id)!;
+            props.seat(props.id, index, name);
         }
     };
 

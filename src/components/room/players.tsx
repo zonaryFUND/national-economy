@@ -4,7 +4,7 @@ import { GameProps, withGame } from "./context/game";
 import Player from "./player";
 
 const players: React.FC<GameProps> = props => {
-    const players = props.game.board.players.map(p => <Player id={p.id} key={p.id} />)
+    const players = Object.values(props.game.board.players).map(p => <Player id={p.id} key={p.id} />)
 
     return (
         <section className={style.players}>

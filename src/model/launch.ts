@@ -9,19 +9,22 @@ export function launch(players: string[], lineup?: "original" | "mecenat" | "glo
     const attendants = ids.slice(0, players.length).sort(_ => Math.random());
     const deck = fisherYatesShuffle(originalDeck);
 
-    const p: Player[] = attendants.map((id, i) => ({
-        id: id,
-        name: players[i],
-        hand: deck.slice(3 * i, 3 * (i + 1)),
-        workers: {
-            available: 2,
-            training: 0,
-            employed: 2
-        },
-        buildings: [],
-        cash: 5 + i,
-        penalty: 0
-    }));
+    const p: {[index: number]: Player} = attendants.reduce((prev, id, i) => {
+        const player: Player = {
+            id: id,
+            name: players[i],
+            hand: deck.slice(3 * i, 3 * (i + 1)),
+            workers: {
+                available: 2,
+                training: 0,
+                employed: 2
+            },
+            buildings: [],
+            cash: 5 + i,
+            penalty: 0
+        };
+        return {...prev, [i]: player};
+    }, {});
 
     return {
         board: {

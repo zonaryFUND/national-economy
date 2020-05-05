@@ -1,7 +1,8 @@
 import "mocha";
 import { Game } from "model/protocol/game/game";
-import { BlankBed, TestPlayerRed, TestPlayerBlue, available, playerAffected, unavailable, assertAffectResolve } from "../../bed";
+import { BlankBed, TestPlayerRed, TestPlayerBlue, available, unavailable, assertAffectResolve } from "../../bed";
 import { cardEffect } from "model/interaction/game/card-effects";
+import { playerAffected } from "model/interaction/game/util";
 
 describe("露店", () => {
     const stall = cardEffect("露店");

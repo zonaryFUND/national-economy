@@ -1,8 +1,9 @@
 import "mocha";
 import { cardEffect } from "model/interaction/game/card-effects";
 import { Game, GameIO } from "model/protocol/game/game";
-import { BlankBed, TestPlayerRed, TestPlayerBlue, available, unavailable, playerAffected, asyncResolveFail, assertAffectIOResolve } from "../../bed";
+import { BlankBed, TestPlayerRed, TestPlayerBlue, available, unavailable, asyncResolveFail, assertAffectIOResolve } from "../../bed";
 import { Player } from "model/protocol/game/player";
+import { playerAffected } from "model/interaction/game/util";
 
 describe("ゼネコン", () => {
     const generalConstructor = cardEffect("ゼネコン");

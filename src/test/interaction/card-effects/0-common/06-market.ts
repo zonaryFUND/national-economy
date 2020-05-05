@@ -1,8 +1,9 @@
 import "mocha";
 import { Game } from "model/protocol/game/game";
-import { BlankBed, TestPlayerRed, TestPlayerBlue, available, playerAffected, unavailable, assertAffectResolve } from "../../bed";
+import { BlankBed, TestPlayerRed, TestPlayerBlue, available, unavailable, assertAffectResolve } from "../../bed";
 import { cardEffect } from "model/interaction/game/card-effects";
 import { Player } from "model/protocol/game/player";
+import { playerAffected } from "model/interaction/game/util";
 
 describe("市場", () => {
     const market = cardEffect("市場");

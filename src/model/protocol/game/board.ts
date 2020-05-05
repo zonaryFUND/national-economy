@@ -7,7 +7,7 @@ export interface Board {
     deck: CardName[];
     trash: CardName[];
     houseHold: number;
-    players: Player[];
+    players: {[index: number]: Player};
     startPlayer: PlayerIdentifier;
     publicBuildings: Building[];
     soldBuildings: Building[];

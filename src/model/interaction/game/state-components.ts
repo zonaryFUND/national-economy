@@ -37,8 +37,12 @@ export function onCurrentPlayer<T>(state: State<Player, T>): State<Game, [T, Pla
         .get<Game>()
         .flatMap(g => {
             const currentPlayer = (g.state as InRoundState).currentPlayer;
-            const [t, override] = state.run(g.board.players.find(p => p.id == currentPlayer)!);
-            const players = g.board.players.map(p => p.id == currentPlayer ? override : p);
+            const index = Object.values(g.board.players).findIndex(p => p.id == currentPlayer)!;
+            const [t, override] = state.run(g.board.players[index]);
+            const players = {
+                ...g.board.players,
+                [index]: override
+            };
             return new State(g => [[t, override], {...g, board: {...g.board, players: players}}]);
         });
 }
@@ -80,7 +84,7 @@ export function currentPlayer(): State<Game, Player> {
         .get<Game>()
         .map(game => {
             const currentId = (game.state as InRoundState).currentPlayer;
-            return game.board.players.find(p => p.id == currentId)!;
+            return Object.values(game.board.players).find(p => p.id == currentId)!;
         });
 }
 

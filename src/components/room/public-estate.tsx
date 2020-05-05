@@ -9,7 +9,7 @@ const publicEstate: React.FC<GameProps & GatewayProps> = props => {
     const fetching = isWaitingFetch(props);
     const onFetch = (to: "public" | "sold", index: number) => () => props.fetch(to, index);
 
-    const carpenters = Math.max(props.game.board.players.length - 1, 1);
+    const carpenters = Math.max(Object.keys(props.game.board.players).length - 1, 1);
     const publicBuildings = props.game.board.publicBuildings.map((b, i) => {
         const activeRound = i < 3 + carpenters ? undefined : 
                             i - 1 - carpenters > props.game.board.currentRound ? i - 1 - carpenters : undefined;

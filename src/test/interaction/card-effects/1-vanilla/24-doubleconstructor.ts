@@ -1,7 +1,8 @@
 import "mocha";
 import { cardEffect } from "model/interaction/game/card-effects";
 import { Player } from "model/protocol/game/player";
-import { TestPlayerRed, available, playerAffected, BlankBed, unavailable, asyncResolveFail, assertAffectResolve, TestPlayerBlue } from "../../bed";
+import { TestPlayerRed, available, BlankBed, unavailable, asyncResolveFail, assertAffectResolve, TestPlayerBlue } from "../../bed";
+import { playerAffected } from "model/interaction/game/util";
 
 describe("二胡市建設", () => {
     const doubleConstructor = cardEffect("二胡市建設");

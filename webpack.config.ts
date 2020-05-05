@@ -10,7 +10,7 @@ const config: webpack.Configuration = {
     output: {
         path: path.resolve(__dirname, ".dist"),
         filename: "[name].js?date=" + Math.floor(new Date().getTime() / 1000),
-        publicPath: "/"
+        publicPath: "/naconomy/"
     },
     module: {
         rules: [
@@ -71,9 +71,11 @@ const config: webpack.Configuration = {
         host: "0.0.0.0",
         port: 8080,
         https: false,
-        publicPath: "/",
-        historyApiFallback: true,
-        clientLogLevel: "debug"
+        publicPath: "/naconomy",
+        historyApiFallback: {
+            index: "/naconomy/"
+        },
+        clientLogLevel: "debug",
     },
     resolve: {
         extensions: [".ts", ".tsx", ".js", ".jsx", ".wav", ".opus", ".svg", ".flac"],

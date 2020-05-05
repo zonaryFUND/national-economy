@@ -48,16 +48,6 @@ function pureBed(game: Game): GameIO {
     };
 }
 
-export function playerAffected(on: Game, to: Player): Game {
-    return {
-        ...on,
-        board: {
-            ...on.board,
-            players: on.board.players.map(p => p.id == to.id ? to : p)
-        }
-    };
-}
-
 export function available(bed: Game, card: CardEffectType) {
     if ((card as SyncEffect).affect != undefined) {
         const result = (card as SyncEffect).available(bed);

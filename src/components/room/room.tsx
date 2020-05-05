@@ -24,9 +24,10 @@ const room: React.FC<Props> = props => {
 
     const [showingTrash, setShowingTrash] = React.useState(false);
 
-    const myIndex = props.me ? props.game.board.players.findIndex(p => p.id == props.me) : 0;
-    const otherEstates = [...Array(props.game.board.players.length - 1).keys()]
-        .map(i => (myIndex + i + 1) % props.game.board.players.length)
+    const players = Object.values(props.game.board.players);
+    const myIndex = props.me ? players.findIndex(p => p.id == props.me) : 0;
+    const otherEstates = [...Array(players.length - 1).keys()]
+        .map(i => (myIndex + i + 1) % players.length)
         .map(i => {
             const p = props.game.board.players[i];
             return <Cards buildings={p.buildings} title={`${p.name || p.id}の建物`} />;

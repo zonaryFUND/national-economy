@@ -1,8 +1,9 @@
 import "mocha";
 import { cardEffect } from "model/interaction/game/card-effects";
-import { BlankBed, available, unavailable, assertAffect, TestPlayerRed, TestPlayerBlue, assertAffectIO, playerAffected } from "../../bed";
+import { BlankBed, available, unavailable, assertAffect, TestPlayerRed, TestPlayerBlue, assertAffectIO } from "../../bed";
 import { Game, GameIO } from "model/protocol/game/game";
 import { Player } from "model/protocol/game/player";
+import { playerAffected } from "model/interaction/game/util";
 
 describe("化学工場", () => {
     const chemicalFactory = cardEffect("化学工場");

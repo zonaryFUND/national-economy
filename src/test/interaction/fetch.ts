@@ -1,9 +1,10 @@
 import "mocha";
 import { Game, GameIO } from "model/protocol/game/game";
-import { BlankBed, TestPlayerRed, playerAffected, TestPlayerBlue } from "./bed";
+import { BlankBed, TestPlayerRed, TestPlayerBlue } from "./bed";
 import { Player } from "model/protocol/game/player";
 import { fetch } from "model/interaction/game/fetching";
 import { deepEqual } from "power-assert";
+import { playerAffected } from "model/interaction/game/util";
 
 describe("労働者の派遣", () => {
     const currentRed: Player = {
