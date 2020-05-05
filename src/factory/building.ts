@@ -1,5 +1,6 @@
 import { Card } from "model/interaction/game/card";
 import cardFactory from "./card";
+import * as React from "react";
 
 export const Farm: Card = {
     name: "農場",
@@ -117,7 +118,7 @@ export const Settler: Card = {
     type: "building",
     cost: 3,
     imageURL: "https://1.bp.blogspot.com/-gFYuyzOTBVk/XXHgWA_0C0I/AAAAAAABUqY/YMCa1XZMjlwzHcBc_ymcRoE8vHoYddQcQCLcBGAs/s400/war_tondenhei_nougyou.png",
-    description: "手札にある[agricultural]の建物を\n1つ無料で作る",
+    description: "手札にある|agricultural|が付いた建物を\n1つ無料で作る",
     buildingType: [],
     score: 14
 };
@@ -190,7 +191,7 @@ export const Railroad: Card = {
     type: "building",
     cost: 5,
     imageURL: "https://3.bp.blogspot.com/-YJrC2uSdeHo/WaNvCvqgInI/AAAAAAABGKg/QfKlpB-ZLeg4DpVRjN9_C-1gaFAE49XbQCLcBGAs/s400/train_kikansya_kemuri.png",
-    description: "終了時：所有する[industrial]につき+8点\n売却不可",
+    description: "終了時：所有する|industrial|につき+8点\n売却不可",
     buildingType: ["unsellable"],
     score: 18,
     bonusScore: player => player.buildings.filter(b => cardFactory(b.card).buildingType.includes("industrial")).length * 8
@@ -201,7 +202,7 @@ export const HQBuilding: Card = {
     type: "building",
     cost: 5,
     imageURL: "https://1.bp.blogspot.com/-Uo4P6jchvm4/VpjCmhB9vEI/AAAAAAAA3D8/EfnGQe4_YM4/s400/kousou_building.png",
-    description: "終了時：所有する[unsellable]につき+6点\n売却不可",
+    description: "終了時：所有する|unsellable|につき+6点\n売却不可",
     buildingType: ["unsellable"],
     score: 20,
     bonusScore: player => player.buildings.filter(b => cardFactory(b.card).buildingType.includes("unsellable")).length * 6
@@ -242,7 +243,7 @@ export const DoubleConstructor: Card = {
     type: "building",
     cost: 5,
     imageURL: "https://2.bp.blogspot.com/-MWODd0KAm5s/UO_3d8RN9LI/AAAAAAAAKto/P47gBO-BaZo/s500/futago_boys.png",
-    description: "同じコストの建物を2つ作る\n1つ文分のコストだけ支払う",
+    description: "同じコストの建物を2つ作る\n1つ分のコストだけ支払う",
     buildingType: [],
     score: 20
 };

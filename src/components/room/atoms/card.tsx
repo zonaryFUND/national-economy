@@ -2,9 +2,7 @@ import * as React from "react";
 import * as style from "./card.module.styl";
 import { CardName } from "model/protocol/game/card";
 import cardFactory from "factory/card";
-const gear = require("public/gear.svg");
-const hoe = require("public/hoe.svg");
-const lock = require("public/lock.svg");
+import CardType from "./card-type";
 
 interface Props {
     card: CardName;
@@ -31,12 +29,11 @@ const card: React.FC<Props> = props => {
         }
     })();
 
-    const icons = card.buildingType.map(t => {
-        switch (t) {
-            case "agricultural": return <div title="この建物は農業に関する建物です" key={t}><img src={hoe} /></div>;
-            case "industrial": return <div title="この建物は工業に関する建物です" key={t}><img src={gear} /></div>;
-            case "unsellable": return <div title="この建物は施設であり、売却できません" key={t}><img src={lock} /></div>;
-        }
+    const description = card.description.split("|").map(str => {
+        if (str == "agricultural" || str == "industrial" || str == "unsellable") 
+            return <CardType type={str} />;
+        const arr = str.split("\n").map(t => <>{t}</>);
+        return arr.reduce((prev, current) => prev.concat(<br />).concat(current), [] as React.ReactNode[]);
     });
 
     return (
@@ -47,13 +44,15 @@ const card: React.FC<Props> = props => {
             </div>
             <footer>
                 {card.score != undefined ? <p>{card.score}</p> : null}
-                {icons.length ? <ul className={style.icons}>{icons}</ul> : null}
+                {card.buildingType.length > 0 ? <ul className={style.icons}>{
+                    card.buildingType.map(b => <CardType type={b} />)
+                }</ul> : null}
             </footer>
             <p className={style.tooltip}>
                 {card.name}<br />
                 {cardType ? <>{cardType}<br /></> : null}
                 {card.cost ? <>建設コスト{card.cost}<br /></> : null}
-                <br />{card.description}<br /><br />
+                {description}<br /><br />
                 {card.score != undefined ? `資産価値：$${card.score}` : null}
             </p>
             {
