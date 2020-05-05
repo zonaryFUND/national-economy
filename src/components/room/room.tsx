@@ -11,6 +11,7 @@ import Log from "./log";
 import Estates from "./me/estates";
 import Selection from "./selection/selection";
 import Trash from "./trash";
+import Mystatus from "./mystatus";
 
 interface Props extends GameProps {
     logs: string[];
@@ -36,8 +37,11 @@ const room: React.FC<Props> = props => {
     return (
         <div className={style.base}>
             <div className={style.mainarea}>
-                <State />
-                <Environment showTrash={() => setShowingTrash(true)} />
+                <div className={style.sticky}>
+                    <State />
+                    <Environment showTrash={() => setShowingTrash(true)} />
+                </div>
+                <Mystatus />
                 {showingTrash ? <Trash close={() => setShowingTrash(false)} /> : null}
                 <Selection />
                 {hand}
@@ -53,6 +57,8 @@ const room: React.FC<Props> = props => {
                 <div>Icons made by <a href="https://www.flaticon.com/authors/eucalyp" title="Eucalyp">Eucalyp</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a></div>
                 <div>Icons made by <a href="https://www.flaticon.com/authors/smalllikeart" title="smalllikeart">smalllikeart</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a></div>
                 <div>Icons made by <a href="https://www.flaticon.com/authors/those-icons" title="Those Icons">Those Icons</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a></div>
+                <div>Icons made by <a href="https://www.flaticon.com/authors/itim2101" title="itim2101">itim2101</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a></div>
+                <div>Icons made by <a href="https://www.flaticon.com/authors/becris" title="Becris">Becris</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a></div>
             </div>
             <div className={style.subarea}>
                 <Players />

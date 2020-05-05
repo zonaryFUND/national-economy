@@ -91,12 +91,7 @@ const state: React.FC<GameProps & GatewayProps> = props => {
                 case "discarding":
                     return <p key={id}>{name}は手札が過剰なため、捨てる手札を選んでいます</p>;
                 case "confirm":
-                    return (
-                        <>
-                            <p key={id}>{name}はラウンド終了処理を完了しました(確認待ち)</p>
-                            <button onClick={props.confirmCleanup}>OK</button>
-                        </>
-                    );
+                    return <p key={id}>{name}はラウンド終了処理を完了しました(確認待ち)</p>;
                 case "finish":
                     return <p key={id}>{name}はラウンド終了処理を完了しました</p>;
             }
@@ -105,6 +100,7 @@ const state: React.FC<GameProps & GatewayProps> = props => {
             <section className={style.state}>
                 <h3>ラウンド終了処理中...</h3>
                 {status}
+                {props.me && exRound[props.me] == "confirm" ? <button onClick={props.confirmCleanup}>確認</button> : null}
             </section>
         );
     }

@@ -45,7 +45,7 @@ const card: React.FC<Props> = props => {
             <footer>
                 {card.score != undefined ? <p>{card.score}</p> : null}
                 {card.buildingType.length > 0 ? <ul className={style.icons}>{
-                    card.buildingType.map(b => <CardType type={b} />)
+                    card.buildingType.map(b => <CardType key={b} type={b} />)
                 }</ul> : null}
             </footer>
             <p className={style.tooltip}>
