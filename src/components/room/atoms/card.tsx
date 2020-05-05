@@ -38,7 +38,7 @@ const card: React.FC<Props> = props => {
 
     return (
         <li className={`${style.card} ${cardStyle}`} onClick={props.onClick} style={props.onClick ? {cursor: "pointer"} : undefined}>
-            <header style={card.cost ? {paddingLeft: 20} : undefined}>{card.cost ? <p>{card.cost}</p> : null}<h3>{card.name}</h3></header>
+            <header style={card.cost ? {paddingLeft: 20} : undefined}>{card.cost ? <p>{card.cost}</p> : null}<h3 style={card.name == "スーパーマーケット" ? {fontSize: 10} : undefined}>{card.name}</h3></header>
             <div className={style.img}>
                 <img src={card.imageURL} />
             </div>
