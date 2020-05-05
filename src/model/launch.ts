@@ -21,6 +21,7 @@ export function launch(players: string[], lineup?: "original" | "mecenat" | "glo
             },
             buildings: [],
             cash: 5 + i,
+            victoryToken: 0,
             penalty: 0
         };
         return {...prev, [i]: player};

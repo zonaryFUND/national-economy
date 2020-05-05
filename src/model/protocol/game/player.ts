@@ -10,5 +10,6 @@ export interface Player {
     workers: {available: number, training: number, employed: number};
     buildings: Building[];
     cash: number;
+    victoryToken: number;
     penalty: number;
 }

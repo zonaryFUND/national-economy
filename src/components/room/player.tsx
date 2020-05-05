@@ -7,6 +7,7 @@ import { PlayerIdentifier } from "model/protocol/game/player";
 import { InRoundState } from "model/protocol/game/state";
 import { SeatContext, SeatProps } from "./fire";
 const money = require("public/money.svg");
+const medal = require("public/medal.svg");
 const star = require("public/star.svg");
 const angry = require("public/angry.svg");
 
@@ -87,6 +88,7 @@ const player: React.FC<Props> = props => {
                 <h3>資産</h3>
                 <p>
                     <span title="現金です。"><img src={money}/>${shown.cash}</span>
+                    <span title="勝利点トークンです。1つで1点、3つ集めると10点が最終スコアに加算されます。"><img src={medal}/>{shown.victoryToken}</span>
                     <span title="未払い賃金の総額です。$1につき勝利点から-3されます。" className={style.penalty}><img src={angry}/>${shown.penalty}</span>
                     <span title="勝利点です。現金と建物の価値を足して、未払い賃金ペナルティを引き、ボーナスを加えた値です。"><img src={star} />{score}</span>
                 </p>

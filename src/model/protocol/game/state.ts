@@ -14,6 +14,7 @@ export type ExRoundState = {[key: string]: ExRoundPlayerStatus};
 export interface PlayerResult {
     cash: number;
     buildings: number;
+    victoryToken: number;
     penalty: number;
     bonus: number; 
     total: number;

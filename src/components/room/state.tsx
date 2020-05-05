@@ -12,6 +12,7 @@ const building = require("public/architecture-and-city.svg");
 const angry = require("public/angry.svg");
 const man = require("public/man.svg");
 const star = require("public/star.svg");
+const medal = require("public/medal.svg");
 
 const turnStart = require("public/turn.mp3");
 const roundStart = require("public/round-start.mp3");
@@ -114,6 +115,7 @@ const state: React.FC<GameProps & GatewayProps> = props => {
                 <th>名前</th>
                 <th><img src={money} />現金</th>
                 <th><img src={building} />不動産価値</th>
+                <th><img src={medal} />勝利点トークン</th>
                 <th><img src={angry} />未払賃金総額</th>
                 <th><img src={man} />ボーナス</th>
                 <th><img src={star} />スコア</th>
@@ -131,11 +133,24 @@ const state: React.FC<GameProps & GatewayProps> = props => {
                 if (score.total >= 25) return "E：不正会計が発覚し破綻";
                 return "F：評価なし";
             })();
+
+            /*
+            const rank = (() => {
+                if (score.total >= 150) return "S：「世界の半分」を号する企業帝国";
+                if (score.total >= 125) return "A：新興分野で事実上の独占を確立";
+                if (score.total >= 100) return "B：首都に本社を構え議会にも影響力";
+                if (score.total >= 75) return "C：地域経済の一角として存続";
+                if (score.total >= 50) return "D：労働争議の末取締役辞任";
+                if (score.total >= 25) return "E：工業化の波に飲まれ廃業";
+                return "F：評価なし";
+            })();
+            */
             return (
                 <tr className={nameStyle(player.id)}>
                     <td>{player.name || player.id}</td>
                     <td>{score.cash}</td>
                     <td>{score.buildings}</td>
+                    <td>{score.victoryToken}</td>
                     <td>{score.penalty}</td>
                     <td>{score.bonus}</td>
                     <td>{score.total}</td>
