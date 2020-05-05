@@ -7,6 +7,8 @@ import cardFactory from "factory/card";
 import { currentPlayer, drawBuildings, onBoard, onCurrentPlayer, addToHand, addToTrash, lift } from "./state-components";
 import { Player } from "model/protocol/game/player";
 import { InRoundState } from "model/protocol/game/state";
+import { calcCost } from "./card";
+import player from "components/room/player";
 
 export interface AsyncCardEffect {
     command: AsyncCommand;
@@ -89,7 +91,7 @@ export function cardEffect(card: CardName, indexOnHand?: number): CardEffectType
         // 建設系
         case "大工":
             return {
-                command: chooseToBuild(c => cardFactory(c).cost),
+                command: chooseToBuild((c, p) => calcCost(cardFactory(c), p)),
                 resolve: (resolver: AsyncResolver) => {
                     const r = resolver as ChooseToBuildCommand;
                     const discard = r.discard!.map(i => i > r.built ? i - 1 : i);
@@ -98,8 +100,8 @@ export function cardEffect(card: CardName, indexOnHand?: number): CardEffectType
             };
         case "建設会社":
             return {
-                command: chooseToBuild(c => {
-                    const cost = cardFactory(c).cost;
+                command: chooseToBuild((c, p) => {
+                    const cost = calcCost(cardFactory(c), p);
                     return cost == undefined ? undefined : cost - 1;
                 }),
                 resolve: (resolver: AsyncResolver) => {
@@ -118,7 +120,7 @@ export function cardEffect(card: CardName, indexOnHand?: number): CardEffectType
             }
         case "ゼネコン":
             return {
-                command: chooseToBuild(card => cardFactory(card).cost),
+                command: chooseToBuild((card, p) => calcCost(cardFactory(card), p)),
                 resolve: (resolver: AsyncResolver) => {
                     const r = resolver as ChooseToBuildCommand;
                     const discard = r.discard!.map(i => i > r.built ? i - 1 : i);

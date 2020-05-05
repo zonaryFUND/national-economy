@@ -18,3 +18,7 @@ export interface Card {
     bonusScore?: (player: Player) => number;
     canAcceptMultiWorkers?: boolean;
 }
+
+export function calcCost(card: Card, player: Player): number | undefined {
+    return card.costReduction != undefined ? card.costReduction.to(player) : card.cost;
+}

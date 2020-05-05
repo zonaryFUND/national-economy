@@ -19,7 +19,7 @@ const estates: React.FC<GameProps & GatewayProps> = props => {
         .map((b, i) => ({card: b.card, i: i}))
         .filter(b => {
             const card = cardFactory(b.card);
-            return !card.buildingType.includes("unsellable") && card.cost;
+            return !card.buildingType.includes("unsellable") && card.cost != undefined;
         })
         .map(e => e.i);
     const value = me.buildings.filter((_, i) => selected.includes(i)).map(b => cardFactory(b.card).score || 0).reduce((p, c) => p + c, 0);

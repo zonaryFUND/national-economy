@@ -105,7 +105,7 @@ const hand: React.FC<GameProps & GatewayProps> = props => {
                 );
                 return [node, 1];
             } else {
-                const cost = build.costCalclator(me.hand[built[0]]);
+                const cost = build.costCalclator(me.hand[built[0]], me);
                 const onDone = () => {
                     props.resolve({built: built[0], discard: selected});
                     reset();

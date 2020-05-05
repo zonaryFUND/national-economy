@@ -140,7 +140,7 @@ function playerCleanup(player: Player, wage: number): {status: ExRoundPlayerStat
     const paid = player.workers.employed * wage;
     const sellableBuildings = player.buildings.filter(b => {
         const card = cardFactory(b.card);
-        return !card.buildingType.includes("unsellable") && card.cost;
+        return !card.buildingType.includes("unsellable") && card.cost != undefined;
     });
     if (paid > player.cash && sellableBuildings.length > 0) {
         return {status: "selling", effect: effectStart.map(_ => [`${player.name || player.id}は現金が必要賃金に足りないため、建物を売却する必要があります`])};

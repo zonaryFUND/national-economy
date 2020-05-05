@@ -6,13 +6,15 @@ import { EffectLog } from "./sync-effect";
 import State from "monad/state/state";
 import { drawBuildings } from "./state-components";
 import { InRoundState } from "model/protocol/game/state";
+import { calcCost } from "./card";
+import { Player } from "model/protocol/game/player";
 
 export interface DisposeRequest {
     disposeCount: number;
 }
 
 export interface BuildRequest {
-    costCalclator: (card: CardName) => number | undefined;
+    costCalclator: (card: CardName, player: Player) => number | undefined;
 }
 
 export type AsyncCommandType = DisposeRequest | "free-build" | BuildRequest | "compose-build" | "design-office"
@@ -82,7 +84,7 @@ export const chooseToFreeBuild = (validator: (card: CardName) => boolean) => cre
 );
 
 export type ChooseToBuildCommand = {built: number, discard?: number[]};
-export const chooseToBuild = (costCalclator: (card: CardName) => number | undefined) => createCommand(
+export const chooseToBuild = (costCalclator: (card: CardName, player: Player) => number | undefined) => createCommand(
     {costCalclator: costCalclator},
     "建設するカードと捨てるカードを選んでいます",
     "手札から建設するカードと捨てるカードを選んでください",
@@ -90,7 +92,7 @@ export const chooseToBuild = (costCalclator: (card: CardName) => number | undefi
         const player = getCurrentPlayer(game);
         if (player) {
             return player.hand.findIndex(c => {
-                const cost = costCalclator(c);
+                const cost = costCalclator(c, player);
                 return cost != undefined && cost <= player.hand.length - 1
             }) > -1;
         } else {
@@ -101,7 +103,7 @@ export const chooseToBuild = (costCalclator: (card: CardName) => number | undefi
         const player = getCurrentPlayer(game);
         if (player == undefined) return "謎のエラー";
         const r = resolver as ChooseToBuildCommand;
-        const cost = costCalclator(player.hand[r.built]);
+        const cost = costCalclator(player.hand[r.built], player);
         if (cost == undefined) return "そのカードは建設できません";
         if (cost > player.hand.length - 1) return "建設に必要なコストを支払えません";
         return true;
@@ -117,10 +119,10 @@ export const composeBuild = createCommand(
         const player = getCurrentPlayer(game);
         if (player) {
             return player.hand.filter(c => {
-                const cost = cardFactory(c).cost;
+                const cost = calcCost(cardFactory(c), player);
                 if (cost == undefined) return false;
                 if (cost > player.hand.length - 2) return false;
-                return player.hand.filter(ci => cardFactory(ci).cost == cost).length >= 2;
+                return player.hand.filter(ci => calcCost(cardFactory(ci), player) == cost).length >= 2;
             }).length > 0;
         } else {
             return false;
@@ -130,8 +132,8 @@ export const composeBuild = createCommand(
         const player = getCurrentPlayer(game);
         if (player == undefined) return "謎のエラー";
         const r = resolver as ComposeBuildCommand;
-        const cost1 = cardFactory(player.hand[r.built[0]]).cost;
-        const cost2 = cardFactory(player.hand[r.built[1]]).cost;
+        const cost1 = calcCost(cardFactory(player.hand[r.built[0]]), player);
+        const cost2 = calcCost(cardFactory(player.hand[r.built[1]]), player);
 
         if (cost1 == undefined || cost2 == undefined) return "建設できないカードが含まれています";
         if (cost1 != cost2) return "建設できるのはコストが同じカード2枚です";
