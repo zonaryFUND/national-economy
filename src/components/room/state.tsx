@@ -82,10 +82,20 @@ const state: React.FC<GameProps> = props => {
                 <th><img src={angry} />未払賃金総額</th>
                 <th><img src={man} />ボーナス</th>
                 <th><img src={star} />スコア</th>
+                <th>評価</th>
             </tr>
         );
         const table = players.map(player => {
             const score = calcScore(player);
+            const rank = (() => {
+                if (score.total >= 150) return "世界有数の時価総額";
+                if (score.total >= 125) return "ハイテク分野に進出し業界最大シェア";
+                if (score.total >= 100) return "一部上場企業として存続";
+                if (score.total >= 75) return "地元自治体で「最も就職したい企業」に";
+                if (score.total >= 50) return "民事再生を経て同業他社により買収";
+                if (score.total >= 25) return "不正会計が発覚し破綻";
+                return "評価なし";
+            })();
             return (
                 <tr className={nameStyle(player.id)}>
                     <td>{player.name || player.id}</td>
@@ -94,6 +104,7 @@ const state: React.FC<GameProps> = props => {
                     <td>{score.penalty}</td>
                     <td>{score.bonus}</td>
                     <td>{score.total}</td>
+                    <td>{rank}</td>
                 </tr>
             );
         });
