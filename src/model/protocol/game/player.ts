@@ -11,5 +11,6 @@ export interface Player {
     buildings: Building[];
     cash: number;
     victoryToken: number;
+    reservedCards: CardName[];
     penalty: number;
 }

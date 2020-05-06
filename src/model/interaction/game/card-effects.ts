@@ -1,5 +1,5 @@
-import { SyncEffect, concatSyncEffect, drawBuilding, becomeStartPlayer, employ, drawConsumerGoods, disposeBuilding, earn, disposeHand, EffectLog, build, gainVictoryTokens, returnToHousehold } from "./sync-effect";
-import { AsyncCommand, AsyncResolver, chooseToBuild, ChooseToBuildCommand, chooseToFreeBuild, TargetIndexCommand, composeBuild, ComposeBuildCommand, TargetHandCommand, chooseToDispose, designOffice } from "./async-command";
+import { SyncEffect, concatSyncEffect, drawBuilding, becomeStartPlayer, employ, drawConsumerGoods, disposeBuilding, earn, disposeHand, EffectLog, build, gainVictoryTokens, returnToHousehold, reserveCards } from "./sync-effect";
+import { AsyncCommand, AsyncResolver, chooseToBuild, ChooseToBuildCommand, chooseToFreeBuild, TargetIndexCommand, composeBuild, MutliBuildCommand, TargetHandCommand, chooseToDispose, designOffice, earthConstruction, MultiBuildRequest } from "./async-command";
 import { Game, getCurrentPlayer, GameIO } from "model/protocol/game/game";
 import { CardName } from "model/protocol/game/card";
 import State from "monad/state/state";
@@ -98,6 +98,7 @@ export function cardEffect(card: CardName, indexOnHand?: number): CardEffectType
                 available: _ => true
             }
 
+
         // Mecenat
         case "菜園":
             return concatSyncEffect(drawConsumerGoods(2), gainVictoryTokens(1));
@@ -132,6 +133,20 @@ export function cardEffect(card: CardName, indexOnHand?: number): CardEffectType
             };
         case "研究所":
             return concatSyncEffect(drawBuilding(2), gainVictoryTokens(1));
+        case "醸造所":  
+            return reserveCards(["消費財", "消費財", "消費財", "消費財"]);
+        case "石油コンビナート":
+            return drawBuilding(4);
+        case "工業団地":
+            return drawBuilding(3);
+        case "養殖場":
+            return {
+                affect: lift(currentPlayer()).flatMap(p => {
+                    const drawn = p.hand.findIndex(c => c == "消費財") >= 0 ? 3 : 2;
+                    return drawConsumerGoods(drawn).affect;
+                }),
+                available: _ => true
+            }
         
         // 選択肢あり
         // 建設系
@@ -177,7 +192,7 @@ export function cardEffect(card: CardName, indexOnHand?: number): CardEffectType
             return {
                 command: composeBuild,
                 resolve: (resolver: AsyncResolver) => {
-                    const r = resolver as ComposeBuildCommand;
+                    const r = resolver as MutliBuildCommand;
                     const discard = r.discard!.map(i => i - r.built.filter(b => b < i).length);
                     return concatSyncEffect(build(r.built), disposeHand(discard)).affect;
                 }
@@ -198,6 +213,40 @@ export function cardEffect(card: CardName, indexOnHand?: number): CardEffectType
                     return concatSyncEffect(build([r.built]), disposeHand(discard), drawBuilding(2)).affect;
                 }
             };
+        case "地球建設":
+            return {
+                command: earthConstruction,
+                resolve: (resolver: AsyncResolver) => {
+                    const r = resolver as MutliBuildCommand;
+                    const discard = r.discard!.map(i => i - r.built.filter(b => b < i).length);
+                    const buildEffect = concatSyncEffect(build(r.built), disposeHand(discard)).affect;
+
+                    return buildEffect.flatMap(log => 
+                        lift(currentPlayer())
+                            .flatMap(p => {
+                                if (p.hand.length > 0) return State.get<GameIO>().map(_ => log);
+                                return drawBuilding(3).affect.map(ln => log.concat(...ln));
+                            })
+                    );
+                }
+            }
+        case "宮大工":
+            return {
+                command: chooseToBuild((c, p) => calcCost(cardFactory(c), p)),
+                resolve: (resolver: AsyncResolver) => {
+                    const r = resolver as ChooseToBuildCommand;
+                    const discard = r.discard!.map(i => i > r.built ? i - 1 : i);
+                    return concatSyncEffect(build([r.built]), disposeHand(discard), gainVictoryTokens(1)).affect;
+                }
+            };
+        case "プレハブ工務店":
+            return {
+                command: chooseToFreeBuild(c => (cardFactory(c).score || 99) <= 10),
+                resolve: (resolver: AsyncResolver) => {
+                    const r = resolver as TargetIndexCommand;
+                    return build([r.targetIndex]).affect;   
+                }
+            }
 
         // 捨て札系
         case "露店":
@@ -216,12 +265,16 @@ export function cardEffect(card: CardName, indexOnHand?: number): CardEffectType
             return createDisposeHandAndEarnEffect(1, 15);
         case "自動車工場": 
             return createDisposeAndDrawEffect(3, 7);
+        case "造船所":
+            return createDisposeAndDrawEffect(3, 6);
     
         // Mecenat
         case "遊園地":
             return createDisposeHandAndEarnEffect(2, 25);
         case "食品工場":
             return createDisposeAndDrawEffect(2, 4);
+        case "食堂":
+            return createDisposeHandAndEarnEffect(1, 8);
     
         // 特殊
         case "設計事務所":
@@ -263,6 +316,17 @@ export function cardEffect(card: CardName, indexOnHand?: number): CardEffectType
         case "社宅":
         case "邸宅":
         case "消費財":
+
+        // Mecenat
+        case "大聖堂":
+        case "旧市街":
+        case "会計事務所":
+        case "墓地":
+        case "輸出港":
+        case "鉄道駅":
+        case "投資銀行":
+        case "植物園":
+        case "博物館":
             return "notforuse";
 
         default:

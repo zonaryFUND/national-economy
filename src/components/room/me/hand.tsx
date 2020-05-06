@@ -5,7 +5,7 @@ import * as selectStyle from "./select.styl";
 import { GameProps, withGame } from "../context/game";
 import { InRoundState, ExRoundState } from "model/protocol/game/state";
 import { cardEffect, AsyncCardEffect } from "model/interaction/game/card-effects";
-import { DisposeRequest, BuildRequest } from "model/interaction/game/async-command";
+import { DisposeRequest, BuildRequest, MultiBuildRequest } from "model/interaction/game/async-command";
 import { GatewayProps, withGateway } from "../context/gateway";
 import cardFactory from "factory/card";
 
@@ -115,8 +115,9 @@ const hand: React.FC<GameProps & GatewayProps> = props => {
             }
         }
 
-        // ComposeBuild
-        if (currentEffect.command.name == "compose-build") {
+        // MultiBuild
+        const multiBuild = currentEffect.command.name as MultiBuildRequest;
+        if (multiBuild.multiCostCalclator != undefined) {
             if (built.length == 0) {
                 const onDone = () => {
                     if (props.validate({built: selected}, currentEffect)) {
@@ -132,7 +133,7 @@ const hand: React.FC<GameProps & GatewayProps> = props => {
                 );
                 return [node, 2];
             } else {
-                const cost = cardFactory(me.hand[built[0]]).cost || 0;
+                const cost = multiBuild.multiCostCalclator(built.map(i => me.hand[i]), me);
                 const onDone = () => {
                     props.resolve({built: built, discard: selected});
                     reset();

@@ -17,7 +17,11 @@ export interface BuildRequest {
     costCalclator: (card: CardName, player: Player) => number | undefined;
 }
 
-export type AsyncCommandType = DisposeRequest | "free-build" | BuildRequest | "compose-build" | "design-office"
+export interface MultiBuildRequest {
+    multiCostCalclator: (cards: CardName[], player: Player) => number | undefined;
+}
+
+export type AsyncCommandType = DisposeRequest | "free-build" | BuildRequest | MultiBuildRequest | "design-office"
 
 export interface AsyncCommand {
     name: AsyncCommandType;
@@ -36,7 +40,7 @@ export interface TargetIndexCommand {
     targetIndex: number;
 }
 
-export type AsyncResolver = TargetHandCommand | ChooseToBuildCommand | ComposeBuildCommand | TargetIndexCommand;
+export type AsyncResolver = TargetHandCommand | ChooseToBuildCommand | MutliBuildCommand | TargetIndexCommand;
 
 function createCommand(name: AsyncCommandType, awaitingMessage: string, directionMessage: string, available: (game: Game) => boolean, validator: (resolver: AsyncResolver, game: Game) => true | string) {
     return {
@@ -110,9 +114,9 @@ export const chooseToBuild = (costCalclator: (card: CardName, player: Player) =>
     }
 );
 
-export type ComposeBuildCommand = {built: number[], discard?: number[]};
+export type MutliBuildCommand = {built: number[], discard?: number[]};
 export const composeBuild = createCommand(
-    "compose-build",
+    {multiCostCalclator: (cards, player) => calcCost(cardFactory(cards[0]), player)},
     "建設するカード(コストが同じ2枚)と捨てるカードを選んでいます",
     "手札から建設するカード(コストが同じ2枚)と捨てるカードを選んでください",
     game => {
@@ -131,13 +135,43 @@ export const composeBuild = createCommand(
     (resolver, game) => {
         const player = getCurrentPlayer(game);
         if (player == undefined) return "謎のエラー";
-        const r = resolver as ComposeBuildCommand;
+        const r = resolver as MutliBuildCommand;
         const cost1 = calcCost(cardFactory(player.hand[r.built[0]]), player);
         const cost2 = calcCost(cardFactory(player.hand[r.built[1]]), player);
 
         if (cost1 == undefined || cost2 == undefined) return "建設できないカードが含まれています";
         if (cost1 != cost2) return "建設できるのはコストが同じカード2枚です";
         return cost1 < player.hand.length - 1 ? true : "建設に必要なコストを支払えません";
+    }
+);
+
+export const earthConstruction = createCommand(
+    {multiCostCalclator: (cards, player) => {
+        const cost0 = calcCost(cardFactory(cards[0]), player);
+        const cost1 = calcCost(cardFactory(cards[1]), player);
+        if (cost0 == undefined || cost1 == undefined) return undefined;
+        return cost0 + cost1;
+    }},
+    "建設するカード2枚と捨てるカードを選んでいます",
+    "手札から建設するカード2枚と捨てるカードを選んでください",
+    game => {
+        const player = getCurrentPlayer(game);
+        if (player && player.hand.length >= 2) {
+            const costs = player.hand.map(c => calcCost(cardFactory(c), player) || 99).sort((a, b) => a - b);
+            return costs[0] + costs[1] <= player.hand.length - 2;
+        } else {
+            return false;
+        }
+    },
+    (resolver, game) => {
+        const player = getCurrentPlayer(game);
+        if (player == undefined) return "謎のエラー";
+        const r = resolver as MutliBuildCommand;
+        const cost1 = calcCost(cardFactory(player.hand[r.built[0]]), player);
+        const cost2 = calcCost(cardFactory(player.hand[r.built[1]]), player);
+
+        if (cost1 == undefined || cost2 == undefined) return "建設できないカードが含まれています";
+        return cost1 + cost2 <= player.hand.length - 2 ? true : "建設に必要なコストを支払えません";
     }
 );
 

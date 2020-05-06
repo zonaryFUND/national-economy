@@ -122,7 +122,6 @@ export function resolveDiscarding(id: PlayerIdentifier, discarded: number[]): St
         });
 }
         
-
 function playerAffected(on: Board, player: Player): Board {
     const index = Object.values(on.players).findIndex(p => p.id == player.id)!;
 

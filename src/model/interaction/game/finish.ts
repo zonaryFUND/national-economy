@@ -1,14 +1,14 @@
 import State from "monad/state/state";
 import { Game } from "model/protocol/game/game";
 import { EffectLog } from "./sync-effect";
-import { calcScore } from "./score";
+import { calcScore, victoryTokenScore } from "./score";
 
 export const finish: State<Game, EffectLog> = State
     .get<Game>()
     .flatMap(game => {
         const players = Object.values(game.board.players);
         const score = players.map(calcScore)
-        const max = Math.max(...score.map(s => s.cash + s.buildings - 3 * s.penalty + s.bonus));
+        const max = Math.max(...score.map(s => s.total));
         const startPlayerIndex = players.findIndex(p => p.id == game.board.startPlayer);
 
         const scoredPlayers = players.map((p, i) => {

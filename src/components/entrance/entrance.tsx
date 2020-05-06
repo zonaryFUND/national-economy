@@ -50,21 +50,41 @@ const entrance: React.FC<Props> = props => {
         const onInput = (e: React.ChangeEvent<HTMLInputElement>) => setCanJoin(e.target.value.length > 0);
 
         const onStart = () => {
-            props.createGame(props.match.params.id, launch(room.players));
+            const target = ["original", "mecenat"].reduce((p, v) => {
+                if ((document.getElementById(v) as HTMLInputElement).checked) return v;
+                return p;
+            }, "original");
+            props.createGame(props.match.params.id, launch(room.players, target as "original" | "mecenat"));
         };
+
+        const head = (() => {
+            if (myname != undefined && room.players[0] == myname) {
+                return (
+                    <>
+                        <label style={{marginRight: 8}}><input type="radio" name="type" id="original" defaultChecked />無印</label>
+                        <label><input type="radio" name="type" id="mecenat" />メセナ</label>
+                        <br />
+                        <button onClick={onStart}>ゲーム開始</button>
+                    </>
+                );
+            }
+
+            if (myname && room.players.length > 0) {
+                return <p>{`${room.players[0]}の開始を待っています`}</p>;
+            }
+
+            return null;
+        })();
 
         return (
             <article className={style.entrance}>
                 <div>
                     <h2>Room{props.match.params.id}</h2>
                     <h3>参加者</h3>
+                    <hr />
                     <ul>{players}</ul>
-                    {myname != undefined && room.players[0] == myname ?
-                        <button onClick={onStart}>ゲーム開始</button> :
-                        myname && room.players.length > 0 ?
-                        <p>{`${room.players[0]}の開始を待っています`}</p> :
-                        null
-                    }
+                    <hr />
+                    {head}
                     {myname == undefined && room.players.length < 4 ?
                         <>
                             <input id="name" onChange={onInput} />

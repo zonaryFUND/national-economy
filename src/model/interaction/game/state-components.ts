@@ -39,6 +39,13 @@ export function gainVictoryToken(amount: number): State<Player, Player> {
         .modify(p => ({...p, victoryToken: p.victoryToken + amount}));
 }
 
+export function reserve(cards: CardName[]): State<Player, CardName[]> {
+    return State
+        .get<Player>()
+        .modify(p => ({...p, reservedCards: p.reservedCards.concat(...cards)}))
+        .map(_ => cards);
+}
+
 export function onCurrentPlayer<T>(state: State<Player, T>): State<Game, [T, Player]> {
     return State
         .get<Game>()

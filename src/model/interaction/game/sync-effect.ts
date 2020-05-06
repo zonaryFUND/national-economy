@@ -4,7 +4,7 @@ import { maxWorkers, getCurrentPlayer } from "./util";
 import { Board } from "model/protocol/game/board";
 import State from "monad/state/state";
 import { CardName } from "model/protocol/game/card";
-import { onBoard, onCurrentPlayer, currentPlayer, removeFromHand, handToBuildings, addToTrash, addToHand, drawBuildings, lift, gainVictoryToken } from "./state-components";
+import { onBoard, onCurrentPlayer, currentPlayer, removeFromHand, handToBuildings, addToTrash, addToHand, drawBuildings, lift, gainVictoryToken, reserve } from "./state-components";
 
 export type EffectLog = string[];
 
@@ -200,4 +200,18 @@ export function gainVictoryTokens(amount: number): SyncEffect {
         affect: lift(onCurrentPlayer(gainVictoryToken(amount))).map(p => [`${p[0].name || p[0].id}が勝利点トークンを${amount}つ獲得しました`]),
         available: _ => true
     };
+}
+
+export function reserveCards(cards: CardName[]): SyncEffect {
+    return {
+        affect: lift(onCurrentPlayer(reserve(cards))).map(tuple => {
+            const buildings = cards.filter(c => c != "消費財");
+            const consumers = cards.filter(c => c == "消費財").length;
+            const cardMessage = buildings.join("、") +
+                                (buildings.length > 0 && consumers > 0 ? "、" : "") +
+                                (consumers > 0 ? `消費財${consumers}枚` : "")
+            return [`${tuple[1].name || tuple[1].id}が${cardMessage}を取り置きました`];
+        }),
+        available: _ => true
+    }
 }

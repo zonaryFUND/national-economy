@@ -9,7 +9,7 @@ import { endRound } from "model/interaction/game/end-round";
 describe("ラウンド終了処理", () => {
     const pseudoFinish = new State<Game, EffectLog>(g => [["疑似ゲーム終了"], g]);
 
-    it("ラウンド終了のクリーンナップ後、ラウンド数の増加・労働者のリセット・研修の終了を行い、スタートプレイヤーの派遣待ち状態にする", () => {
+    it("ラウンド終了のクリーンナップ後、ラウンド数の増加・労働者のリセット・研修の終了、取り置きカードの入手を行い、スタートプレイヤーの派遣待ち状態にする", () => {
         const bed: Game = {
             board: {
                 ...BlankBed.board,
@@ -25,6 +25,8 @@ describe("ラウンド終了処理", () => {
                             training: 1,
                             employed: 3
                         },
+                        hand: ["食品工場"],
+                        reservedCards: ["消費財", "消費財", "消費財", "消費財"],
                         buildings: [{card: "ゼネコン", workersOwner: ["red"]}]
                     },
                     TestPlayerBlue
@@ -38,6 +40,7 @@ describe("ラウンド終了処理", () => {
 
         const result = endRound(pseudoFinish).run(bed);
         assert.deepEqual(result[0], [
+            "redが取り置いていた消費財4枚を手札に加えました",
             "redの新入社員1人が研修を終えました",
             "ラウンド2をスタートプレイヤーblueから開始します"
         ], "ログが異なる");
@@ -57,6 +60,7 @@ describe("ラウンド終了処理", () => {
                             training: 0,
                             employed: 3
                         },
+                        hand: ["食品工場", "消費財", "消費財", "消費財", "消費財"],
                         buildings: [{card: "ゼネコン", workersOwner: []}]
                     },
                     TestPlayerBlue

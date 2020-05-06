@@ -17,6 +17,7 @@ export const TestPlayerRed: Player = {
     },
     buildings: [],
     cash: 0,
+    reservedCards: [],
     victoryToken: 0,
     penalty: 0
 };
