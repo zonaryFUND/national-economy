@@ -1,4 +1,4 @@
-import { SyncEffect, concatSyncEffect, drawBuilding, becomeStartPlayer, employ, drawConsumerGoods, disposeBuilding, earn, disposeHand, EffectLog, build } from "./sync-effect";
+import { SyncEffect, concatSyncEffect, drawBuilding, becomeStartPlayer, employ, drawConsumerGoods, disposeBuilding, earn, disposeHand, EffectLog, build, gainVictoryTokens, returnToHousehold } from "./sync-effect";
 import { AsyncCommand, AsyncResolver, chooseToBuild, ChooseToBuildCommand, chooseToFreeBuild, TargetIndexCommand, composeBuild, ComposeBuildCommand, TargetHandCommand, chooseToDispose, designOffice } from "./async-command";
 import { Game, getCurrentPlayer, GameIO } from "model/protocol/game/game";
 import { CardName } from "model/protocol/game/card";
@@ -9,6 +9,7 @@ import { Player } from "model/protocol/game/player";
 import { InRoundState } from "model/protocol/game/state";
 import { calcCost } from "./card";
 import player from "components/room/player";
+import players from "components/room/players";
 
 export interface AsyncCardEffect {
     command: AsyncCommand;
@@ -32,6 +33,16 @@ function createDisposeHandAndEarnEffect(disposed: number, earned: number): CardE
             return concatSyncEffect(disposeHand(r.targetHandIndices), earn(earned)).affect;
         }
     }
+}
+
+function createDisposeAndDrawEffect(disposed: number, drawn: number): CardEffectType {
+    return {
+        command: chooseToDispose(disposed),
+        resolve: (resolver: AsyncResolver) => {
+            const r = resolver as TargetHandCommand;
+            return concatSyncEffect(disposeHand(r.targetHandIndices), drawBuilding(drawn)).affect;
+        }
+    };
 }
 
 export type CardEffectType = SyncEffect | AsyncCardEffect | "notforuse";
@@ -86,6 +97,41 @@ export function cardEffect(card: CardName, indexOnHand?: number): CardEffectType
                 affect: lift(currentPlayer()).flatMap(p => drawBuilding(p.hand.length == 0 ? 4 : 2).affect),
                 available: _ => true
             }
+
+        // Mecenat
+        case "菜園":
+            return concatSyncEffect(drawConsumerGoods(2), gainVictoryTokens(1));
+        case "鉄工所":
+            return {
+                affect: drawBuilding(2).affect,
+                available: game => {
+                    const current = getCurrentPlayer(game);
+                    return current?.id != undefined && 
+                        game.board.publicBuildings.find(b => b.card == "鉱山" && b.workersOwner.includes(current?.id)) != undefined;
+                }
+            }
+        case "宝くじ":
+            return concatSyncEffect(earn(20), returnToHousehold(10));
+        case "芋畑":
+            return {
+                affect: lift(currentPlayer()).flatMap(p => drawConsumerGoods(3 - p.hand.length).affect),
+                available: game => {
+                    const player = getCurrentPlayer(game);
+                    return player != undefined && player.hand.length < 3;
+                }
+            };
+        case "観光牧場":
+            return {
+                affect: lift(currentPlayer()).flatMap(p => earn(p.hand.filter(h => h == "消費財").length * 4).affect),
+                available: game => {
+                    const player = getCurrentPlayer(game);
+                    if (player == undefined) return false;
+                    const consumergoods = player.hand.filter(h => h == "消費財").length;
+                    return consumergoods > 0 && game.board.houseHold >= consumergoods * 4;
+                }
+            };
+        case "研究所":
+            return concatSyncEffect(drawBuilding(2), gainVictoryTokens(1));
         
         // 選択肢あり
         // 建設系
@@ -137,6 +183,22 @@ export function cardEffect(card: CardName, indexOnHand?: number): CardEffectType
                 }
             }
 
+        // Mecenat
+        case "建築会社":
+            const costCalculator = (card: CardName, player: Player) => {
+                const c = cardFactory(card);
+                if (!c.buildingType.includes("unsellable")) return undefined;
+                return calcCost(c, player);
+            };
+            return {
+                command: chooseToBuild(costCalculator),
+                resolve: (resolver: AsyncResolver) => {
+                    const r = resolver as ChooseToBuildCommand;
+                    const discard = r.discard!.map(i => i > r.built ? i - 1 : i);
+                    return concatSyncEffect(build([r.built]), disposeHand(discard), drawBuilding(2)).affect;
+                }
+            };
+
         // 捨て札系
         case "露店":
             return createDisposeHandAndEarnEffect(1, 6);
@@ -148,26 +210,18 @@ export function cardEffect(card: CardName, indexOnHand?: number): CardEffectType
             return createDisposeHandAndEarnEffect(4, 24);
         case "万博":
             return createDisposeHandAndEarnEffect(5, 30);
-        case "工場": {
-            return {
-                command: chooseToDispose(2),
-                resolve: (resolver: AsyncResolver) => {
-                    const r = resolver as TargetHandCommand;
-                    return concatSyncEffect(disposeHand(r.targetHandIndices), drawBuilding(4)).affect;
-                }
-            }
-        }
+        case "工場": 
+            return createDisposeAndDrawEffect(2, 4);
         case "レストラン":
             return createDisposeHandAndEarnEffect(1, 15);
-        case "自動車工場": {
-            return {
-                command: chooseToDispose(3),
-                resolve: (resolver: AsyncResolver) => {
-                    const r = resolver as TargetHandCommand;
-                    return concatSyncEffect(disposeHand(r.targetHandIndices), drawBuilding(7)).affect;
-                }
-            }
-        }
+        case "自動車工場": 
+            return createDisposeAndDrawEffect(3, 7);
+    
+        // Mecenat
+        case "遊園地":
+            return createDisposeHandAndEarnEffect(2, 25);
+        case "食品工場":
+            return createDisposeAndDrawEffect(2, 4);
     
         // 特殊
         case "設計事務所":

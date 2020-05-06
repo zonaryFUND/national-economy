@@ -4,6 +4,7 @@ import { Player } from "model/protocol/game/player";
 import { Game, GameIO } from "model/protocol/game/game";
 import { InRoundState } from "model/protocol/game/state";
 import { Board } from "model/protocol/game/board";
+import { EffectLog } from "./sync-effect";
 
 export function addToHand(cards: CardName[]): State<Player, CardName[]> {
     return State
@@ -30,6 +31,12 @@ export function handToBuildings(targets: number[]): State<Player, CardName[]> {
             }))
             .map(_ => cards)
         );
+}
+
+export function gainVictoryToken(amount: number): State<Player, Player> {
+    return State
+        .get<Player>()
+        .modify(p => ({...p, victoryToken: p.victoryToken + amount}));
 }
 
 export function onCurrentPlayer<T>(state: State<Player, T>): State<Game, [T, Player]> {

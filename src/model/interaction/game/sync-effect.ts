@@ -4,7 +4,7 @@ import { maxWorkers, getCurrentPlayer } from "./util";
 import { Board } from "model/protocol/game/board";
 import State from "monad/state/state";
 import { CardName } from "model/protocol/game/card";
-import { onBoard, onCurrentPlayer, currentPlayer, removeFromHand, handToBuildings, addToTrash, addToHand, drawBuildings, lift } from "./state-components";
+import { onBoard, onCurrentPlayer, currentPlayer, removeFromHand, handToBuildings, addToTrash, addToHand, drawBuildings, lift, gainVictoryToken } from "./state-components";
 
 export type EffectLog = string[];
 
@@ -162,6 +162,21 @@ export function earn(amount: number): SyncEffect {
     };
 }
 
+export function returnToHousehold(amount: number): SyncEffect {
+    const playerEffect = State.get<Player>()
+                    .modify(p => ({...p, cash: p.cash - amount}));
+    const boardEffect = State.get<Board>()
+                    .modify(b => ({...b, houseHold: b.houseHold + amount}));
+    const affect = onBoard(boardEffect)
+                    .flatMap(_ => onCurrentPlayer(playerEffect))
+                    .map(tuple => [`${tuple[1].name || tuple[1].id}が家計に$${amount}を返しました`]);
+
+    return {
+        affect: lift(affect),
+        available: _ => true
+    };
+}
+
 export function lawOfficeResult(target: number): SyncEffect {
     const message = (player: Player, topFiveCards: CardName[]) => 
         `${player.name || player.id}が山札の上から5枚を見て1枚を手札に加え、残りの${topFiveCards.filter((_, i) => i != target).join("、")}を捨てました`;
@@ -176,6 +191,13 @@ export function lawOfficeResult(target: number): SyncEffect {
 
     return {
         affect: affect,
+        available: _ => true
+    };
+}
+
+export function gainVictoryTokens(amount: number): SyncEffect {
+    return {
+        affect: lift(onCurrentPlayer(gainVictoryToken(amount))).map(p => [`${p[0].name || p[0].id}が勝利点トークンを${amount}つ獲得しました`]),
         available: _ => true
     };
 }
