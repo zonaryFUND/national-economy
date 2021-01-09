@@ -27,7 +27,7 @@ export const Lottery: Card = {
     type: "building",
     cost: 2,
     imageURL: "https://4.bp.blogspot.com/-TB46ivV-x5E/VNH7Z18n_5I/AAAAAAAAreM/BYa3W6nYD2o/s400/takarakuji_uriba.png",
-    description: "家計から$20を得て$10返す",
+    description: "家計から$20を得て$10返す\n(家計に$20以上なければ使用できない)",
     buildingType: [],
     score: 10
 };
@@ -57,7 +57,7 @@ export const TouristRanch: Card = {
     type: "building",
     cost: 3,
     imageURL: "https://2.bp.blogspot.com/-GUgdEctld5o/VXOTfwppjmI/AAAAAAAAuAY/LH-o7SNo-Eg/s400/bokujou.png",
-    description: "手札にある消費財1枚につき\n$4を家計から得る",
+    description: "手札にある消費財1枚につき\n$4を家計から得る\n(捨て札にはしない)",
     buildingType: ["agricultural"],
     score: 14
 };
