@@ -32,7 +32,10 @@ export const BlankBed: Game = {
         deck: [],
         trash: [],
         houseHold: 0,
-        players: [TestPlayerRed, TestPlayerBlue],
+        players: {
+            0: TestPlayerRed, 
+            1: TestPlayerBlue
+        },
         startPlayer: "red",
         publicBuildings: [],
         soldBuildings: []

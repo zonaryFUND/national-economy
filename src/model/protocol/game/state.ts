@@ -4,7 +4,13 @@ import { CardName } from "./card";
 export interface InRoundState {
     currentPlayer: PlayerIdentifier;
     phase: "dispatching" | "oncardeffect";
-    effecting?: CardName;
+    effecting?: {
+        card: CardName;
+        address: {
+            to: "mine" | "public" | "sold";
+            index: number;
+        };
+    }
     revealing?: CardName[]
 }
 

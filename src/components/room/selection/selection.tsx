@@ -6,7 +6,7 @@ import ConstructionCompany from "./constructioncompany";
 
 const selection: React.FC<GameProps & GatewayProps> = props => {
     const state = props.game.state as InRoundState;
-    if (state.effecting == "設計事務所") {
+    if (state.effecting?.card == "設計事務所") {
         return <ConstructionCompany />
     }
 

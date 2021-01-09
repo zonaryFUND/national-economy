@@ -18,7 +18,7 @@ const hand: React.FC<GameProps & GatewayProps> = props => {
         if (inRoundState.currentPlayer != props.me) return undefined;
         if (inRoundState.effecting == undefined) return undefined;
 
-        const effect = cardEffect(inRoundState.effecting) as AsyncCardEffect;
+        const effect = cardEffect(inRoundState.effecting!.card) as AsyncCardEffect;
         if (effect.command.name == "design-office") return undefined;
         return effect;
     })();

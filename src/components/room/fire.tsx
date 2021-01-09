@@ -45,17 +45,14 @@ const Inner: React.FC<Props & FireProps> = props => {
     };
 
     React.useEffect(() => {
-        console.log(myID)
         if (myID) {
             const leave = (e: BeforeUnloadEvent) => {
-                console.log("leaving")
                 const index = Object.values(game!.board.players).findIndex(p => p.name == props.myname)!;
                 if (index >= 0) props.seat(props.id, index, "");
                 e.returnValue = "ページを離れようとしたので、席から外れました。"
             };
             window.addEventListener("beforeunload", leave);
             return () => {
-                console.log("leaving")
                 const index = Object.values(game!.board.players).findIndex(p => p.name == props.myname)!;
                 if (index >= 0) props.seat(props.id, index, "");
                 window.removeEventListener("beforeunload", leave);

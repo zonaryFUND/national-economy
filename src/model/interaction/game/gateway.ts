@@ -1,5 +1,5 @@
 import { Game, GameIO } from "model/protocol/game/game";
-import { fetch, fetchable } from "./fetching";
+import { fetch, fetchable, cancelFetching } from "./fetching";
 import { turnAround } from "./turn";
 import { roundCleanup, resolveSelling, cleanupEndBoundary, resolveDiscarding, isLegalSelling } from "./cleanup";
 import { lift } from "./state-components";
@@ -40,9 +40,13 @@ const Gateway = (game: Game) => {
             return [result[1].game, result[0]] as [Game, EffectLog];
         },
         asyncResolve: (resolver: AsyncResolver) => {
-            const effect = cardEffect((io.game.state as InRoundState).effecting!) as AsyncCardEffect;
+            const effect = cardEffect((io.game.state as InRoundState).effecting!.card) as AsyncCardEffect;
             const state = effect.resolve(resolver).flatMap(log => lift(turn).map(ln => log.concat(...ln)));
             const result = state.run(io);
+            return [result[1].game, result[0]] as [Game, EffectLog];
+        },
+        cancelAsync: () => {
+            const result = cancelFetching.run(io);
             return [result[1].game, result[0]] as [Game, EffectLog];
         },
         sellable: (id: PlayerIdentifier, sold: number[]) => {

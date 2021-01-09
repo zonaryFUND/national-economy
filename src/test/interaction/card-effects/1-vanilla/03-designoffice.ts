@@ -59,7 +59,13 @@ describe("設計事務所", () => {
             state: {
                 currentPlayer: "red",
                 phase: "oncardeffect",
-                effecting: "設計事務所",
+                effecting: {
+                    card: "設計事務所",
+                    address: {
+                        to: "sold",
+                        index: 0
+                    }
+                },
                 revealing: ["社宅", "自動車工場", "製鉄所", "設計事務所", "農協"]
             }
         }, result[1].game, "盤面変化が異なる")
@@ -75,7 +81,13 @@ describe("設計事務所", () => {
             state: {
                 currentPlayer: "red",
                 phase: "oncardeffect",
-                effecting: "設計事務所",
+                effecting: {
+                    card: "設計事務所",
+                    address: {
+                        to: "mine",
+                        index: 0
+                    }
+                },
                 revealing: ["社宅", "自動車工場", "製鉄所", "設計事務所", "農協"]
             }
         }

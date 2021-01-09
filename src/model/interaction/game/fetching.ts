@@ -7,6 +7,8 @@ import { Player, PlayerIdentifier } from "model/protocol/game/player";
 import { InRoundState } from "model/protocol/game/state";
 import { Building } from "model/protocol/game/building";
 import cardFactory from "factory/card";
+import { Board } from "model/protocol/game/board";
+import { playerAffected } from "./util";
 
 export function fetch(to: "occupied" | "public" | "sold", index: number, turnAround?: State<Game, EffectLog>): State<GameIO, EffectLog> {
     return lift(State.get<Game>())
@@ -37,7 +39,13 @@ export function fetch(to: "occupied" | "public" | "sold", index: number, turnAro
                         state: {
                             ...(g.game.state as InRoundState),
                             phase: "oncardeffect",
-                            effecting: targetCard                            
+                            effecting: {
+                                card: targetCard,
+                                address: {
+                                    to: to == "occupied" ? "mine" : (to == "public" ? "public" : "sold"),
+                                    index: index
+                                }
+                            }
                         }
                     }
                 }));
@@ -137,4 +145,70 @@ export function fetchable(to: "occupied" | "public" | "sold", index: number): St
             const async = effect as AsyncCardEffect;
             return (async.available ?? async.command.available)(game) ? true : "効果を発動する条件を満たしていないか、労働者を派遣できない建物です";
         });
+}
+
+export const cancelFetching: State<GameIO, EffectLog> = (() => {
+    const state = State
+        .get<Game>()
+        .flatMap(game => {
+            const player = getCurrentPlayer(game);
+            const address = (game.state as InRoundState).effecting!.address
+            let state = game.state;
+            delete (state as InRoundState).effecting;
+            const to: Game = {
+                ...removeEffectingWorker(game, address.to, address.index, player!),
+                state: {
+                    ...state as InRoundState,
+                    phase: "dispatching"
+                }
+            }
+            return State.put(to)
+                .map(_ => [`${player?.name || player?.id}が派遣を取り消しました`])
+        });
+    return lift(state);
+})();
+
+function removeEffectingWorker(game: Game, to: "mine" | "public" | "sold", index: number, player: Player): Game {
+    const workerAdjusted: Player = {
+        ...player,
+        workers: {
+            ...player.workers,
+            available: player.workers.available + 1
+        }
+    };
+    const prev = playerAffected(game, workerAdjusted);
+
+    switch (to) {
+        case "mine":
+            const to: Player = {
+                ...workerAdjusted,
+                buildings: workerAdjusted.buildings.map((b, i) => ({
+                    card: b.card,
+                    workersOwner: i != index ? b.workersOwner : b.workersOwner.slice(0, b.workersOwner.length - 2)
+                }))
+            };
+            return playerAffected(prev, to)
+        case "public":
+            return {
+                ...prev,
+                board: {
+                    ...prev.board,
+                    publicBuildings: prev.board.publicBuildings.map((b, i) => ({
+                        card: b.card,
+                        workersOwner: i != index ? b.workersOwner : b.workersOwner.slice(0, b.workersOwner.length - 2)
+                    }))
+                }
+            }
+        case "sold":
+            return {
+                ...prev,
+                board: {
+                    ...prev.board,
+                    soldBuildings: prev.board.soldBuildings.map((b, i) => ({
+                        card: b.card,
+                        workersOwner: i != index ? b.workersOwner : b.workersOwner.slice(0, b.workersOwner.length - 2)
+                    }))
+                }
+            }
+    }
 }

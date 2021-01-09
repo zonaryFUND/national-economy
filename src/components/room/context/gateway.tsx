@@ -15,6 +15,7 @@ export interface GatewayProviderProps {
 export interface GatewayProps {
     fetch: (to: "occupied" | "public" | "sold", index: number) => void;
     validate: (resolver: AsyncResolver, effect: AsyncCardEffect) => boolean;
+    cancelFetching: () => void;
     resolve: (resolver: AsyncResolver) => void;
     sell: (indices: number[]) => boolean;
     discard: (indices: number[]) => void;
@@ -42,7 +43,12 @@ function toConsumer(game: Game, provider: GatewayProviderProps, me?: PlayerIdent
     const resolve = (resolver: AsyncResolver) => {
         const result = Gateway(game).asyncResolve(resolver);
         provider.update(result);
-    }
+    };
+
+    const cancelFetching = () => {
+        const gateway = Gateway(game);
+        provider.update(gateway.cancelAsync());
+    };
 
     const sell = (indices: number[]) => {
         if (me == undefined) return false;
@@ -71,6 +77,7 @@ function toConsumer(game: Game, provider: GatewayProviderProps, me?: PlayerIdent
     return {
         fetch: fetch,
         validate: validate,
+        cancelFetching: cancelFetching,
         resolve: resolve,
         sell: sell,
         discard: discard,

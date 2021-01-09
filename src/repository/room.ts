@@ -13,7 +13,6 @@ export function fetchRoom(db: firebase.firestore.Firestore, id: string): Observa
 }
 
 export function joinRoom(db: firebase.firestore.Firestore, id: string, name: string) {
-    console.log(name)
     db.collection("rooms").doc(`room${id}`).update({players: firebase.firestore.FieldValue.arrayUnion(name)}).catch(console.log);
 }
 
