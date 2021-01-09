@@ -6,12 +6,13 @@ import CardType from "./card-type";
 
 interface Props {
     card: CardName;
+    playerCount?: number;
     activeRound?: number;
     onClick?: () => void;
 }
 
 const card: React.FC<Props> = props => {
-    const card = cardFactory(props.card);
+    const card = cardFactory(props.card, props.playerCount);
 
     const cardStyle = (() => {
         switch (card.type) {

@@ -14,7 +14,7 @@ const publicEstate: React.FC<GameProps & GatewayProps> = props => {
         const activeRound = i < 3 + carpenters ? undefined : 
                             i - 1 - carpenters > props.game.board.currentRound ? i - 1 - carpenters : undefined;
         const onClick = fetching && activeRound == undefined ? onFetch("public", i) : undefined;
-        return <Card key={`${b.card}-${i}`} card={b.card} activeRound={activeRound} onClick={onClick}><Workers owners={b.workersOwner} /></Card>;
+        return <Card key={`${b.card}-${i}`} playerCount={Object.keys(props.game.board.players).length} card={b.card} activeRound={activeRound} onClick={onClick}><Workers owners={b.workersOwner} /></Card>;
     });
     const soldEstates = props.game.board.soldBuildings.map((b, i) => <Card key={`${b.card}-${i}`} card={b.card} onClick={fetching ? onFetch("sold", i) : undefined}><Workers owners={b.workersOwner} /></Card>);
 
