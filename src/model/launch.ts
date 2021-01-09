@@ -8,9 +8,9 @@ export function launch(players: string[], lineup?: "original" | "mecenat" | "glo
     const ids: PlayerIdentifier[] = ["red", "blue", "orange", "purple"];
     const attendants = ids.slice(0, players.length).sort(_ => Math.random());
     const d = lineup == "mecenat" ? mecenatDeck : originalDeck;
-    const deck = fisherYatesShuffle(d);
+    const deck = fisherYatesShuffle(fisherYatesShuffle(fisherYatesShuffle(fisherYatesShuffle(fisherYatesShuffle(d)))));
 
-    const p: {[index: number]: Player} = fisherYatesShuffle(attendants).reduce((prev, id, i) => {
+    const p: {[index: number]: Player} = fisherYatesShuffle(fisherYatesShuffle(fisherYatesShuffle(fisherYatesShuffle(fisherYatesShuffle(attendants))))).reduce((prev, id, i) => {
         const player: Player = {
             id: id,
             name: players[i],
