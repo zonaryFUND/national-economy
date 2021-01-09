@@ -91,7 +91,7 @@ describe("建築会社", () => {
                                 ...TestPlayerRed,
                                 victoryToken: 5,
                                 hand: ["食品工場", "食堂"],
-                                buildings: [{card: "大聖堂", workersOwner: []}]
+                                buildings: [{card: "大聖堂", workers: []}]
                             }
                         }
                     }

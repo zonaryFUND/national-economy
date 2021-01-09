@@ -15,41 +15,25 @@ describe("ラウンド終了時クリーンアップ", () => {
                     {
                         ...TestPlayerRed,
                         cash: 20,
-                        workers: {
-                            available: 0,
-                            training: 1,
-                            employed: 3
-                        }
+                        workers: [{type: "human", fetched: true}, {type: "human", fetched: true}, {type: "training-human", fetched: false}]
                     },
                     {
                         ...TestPlayerBlue,
                         cash: 20,
-                        workers: {
-                            available: 0,
-                            training: 1,
-                            employed: 4
-                        }
+                        workers: [{type: "human", fetched: true}, {type: "human", fetched: true}, {type: "human", fetched: true}, {type: "training-human", fetched: false}]
                     },
                     {
                         ...TestPlayerRed,
                         cash: 20,
                         id: "orange",
-                        workers: {
-                            available: 0,
-                            training: 1,
-                            employed: 5
-                        }
+                        workers: [{type: "human", fetched: true}, {type: "human", fetched: true}, {type: "human", fetched: true}, {type: "human", fetched: true}, {type: "training-human", fetched: false}]
                     },
                     {
                         ...TestPlayerRed,
                         cash: 20,
                         hand: ["農場", "農場", "農場", "農場", "農場", "農場"],
                         id: "purple",
-                        workers: {
-                            available: 0,
-                            training: 0,
-                            employed: 5
-                        }
+                        workers: [{type: "human", fetched: true}, {type: "human", fetched: true}, {type: "human", fetched: true}, {type: "human", fetched: true}, {type: "human", fetched: true}]
                     },
                 ]
             }
@@ -72,41 +56,25 @@ describe("ラウンド終了時クリーンアップ", () => {
                     0: {
                         ...TestPlayerRed,
                         cash: 11,
-                        workers: {
-                            available: 0,
-                            training: 1,
-                            employed: 3
-                        }
+                        workers: [{type: "human", fetched: true}, {type: "human", fetched: true}, {type: "training-human", fetched: false}]
                     },
                     1: {
                         ...TestPlayerBlue,
                         cash: 8,
-                        workers: {
-                            available: 0,
-                            training: 1,
-                            employed: 4
-                        }
+                        workers: [{type: "human", fetched: true}, {type: "human", fetched: true}, {type: "human", fetched: true}, {type: "training-human", fetched: false}]
                     },
                     2: {
                         ...TestPlayerRed,
                         cash: 5,
                         id: "orange",
-                        workers: {
-                            available: 0,
-                            training: 1,
-                            employed: 5
-                        }
+                        workers: [{type: "human", fetched: true}, {type: "human", fetched: true}, {type: "human", fetched: true}, {type: "human", fetched: true}, {type: "training-human", fetched: false}]
                     },
                     3: {
                         ...TestPlayerRed,
                         cash: 5,
                         hand: ["農場", "農場", "農場", "農場", "農場", "農場"],
                         id: "purple",
-                        workers: {
-                            available: 0,
-                            training: 0,
-                            employed: 5
-                        }
+                        workers: [{type: "human", fetched: true}, {type: "human", fetched: true}, {type: "human", fetched: true}, {type: "human", fetched: true}, {type: "human", fetched: true}]
                     }
                 }
             },
@@ -129,8 +97,8 @@ describe("ラウンド終了時クリーンアップ", () => {
                     0: {
                         ...TestPlayerRed,
                         cash: 1,
-                        buildings: [{card: "不動産屋", workersOwner: []}],
-                        workers: {available: 0, training: 0, employed: 2}
+                        buildings: [{card: "不動産屋", workers: []}],
+                        workers: [{type: "human", fetched: true}, {type: "human", fetched: true}]
                     }
                 }
             }
@@ -147,8 +115,8 @@ describe("ラウンド終了時クリーンアップ", () => {
                 players: {
                     0: {
                         ...TestPlayerRed,
-                        buildings: [{card: "不動産屋", workersOwner: []}],
-                        workers: {available: 0, training: 0, employed: 2},
+                        buildings: [{card: "不動産屋", workers: []}],
+                        workers: [{type: "human", fetched: true}, {type: "human", fetched: true}],
                         penalty: 3
                     }
                 }
@@ -169,14 +137,14 @@ describe("ラウンド終了時クリーンアップ", () => {
                 0: {
                     ...TestPlayerRed,
                     cash: 1,
-                    workers: {available: 0, training: 0, employed: 5},
+                    workers: [{type: "human", fetched: true}, {type: "human", fetched: true}, {type: "human", fetched: true}, {type: "human", fetched: true}, {type: "human", fetched: true}],
                     buildings: [
-                        {card: "不動産屋", workersOwner: []}, 
-                        {card: "化学工場", workersOwner: []},
-                        {card: "農場", workersOwner: []},
-                        {card: "農場", workersOwner: []},
-                        {card: "農場", workersOwner: []},
-                        {card: "工場", workersOwner: []}
+                        {card: "不動産屋", workers: []}, 
+                        {card: "化学工場", workers: []},
+                        {card: "農場", workers: []},
+                        {card: "農場", workers: []},
+                        {card: "農場", workers: []},
+                        {card: "工場", workers: []}
                     ]
                 }
             }
@@ -218,22 +186,21 @@ describe("ラウンド終了時クリーンアップ", () => {
                 houseHold: 15,
                 currentRound: 5,
                 soldBuildings: [
-                    {card: "農場", workersOwner: []},
-                    {card: "農場", workersOwner: []},
-                    {card: "農場", workersOwner: []},
+                    {card: "農場", workers: []},
+                    {card: "農場", workers: []},
+                    {card: "農場", workers: []},
                 ],
-                players: {
-                    0: {
-                        ...TestPlayerRed,
+                players: [
+                    {
+                        ...sellingBed.board.players[0],
                         cash: 4,
-                        workers: {available: 0, training: 0, employed: 5},
                         buildings: [
-                            {card: "不動産屋", workersOwner: []}, 
-                            {card: "化学工場", workersOwner: []},
-                            {card: "工場", workersOwner: []}
+                            {card: "不動産屋", workers: []}, 
+                            {card: "化学工場", workers: []},
+                            {card: "工場", workers: []}
                         ]
                     }
-                }
+                ]
             },
             state: {
                 red: "finish"
@@ -249,7 +216,7 @@ describe("ラウンド終了時クリーンアップ", () => {
                 0: {
                     ...TestPlayerRed,
                     cash: 10,
-                    workers: {available: 0, training: 0, employed: 2},
+                    workers: [{type: "human", fetched: true}, {type: "human", fetched: true}],
                     hand: ["化学工場", "消費財", "工場", "本社ビル", "珈琲店", "設計事務所", "農場"]
                 }
             }
@@ -287,7 +254,7 @@ describe("ラウンド終了時クリーンアップ", () => {
                 players: {
                     0: {
                         ...discardingBed.board.players[0],
-                        buildings: [{card: "倉庫", workersOwner: []}]
+                        buildings: [{card: "倉庫", workers: []}]
                     }
                 }
             }

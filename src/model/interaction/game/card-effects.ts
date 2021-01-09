@@ -58,18 +58,18 @@ export function cardEffect(card: CardName, indexOnHand?: number): CardEffectType
             return employ(false);
         case "高等学校":
             return {
-                affect: lift(currentPlayer()).flatMap(p => employ(false, 4 - p.workers.employed).affect),
+                affect: lift(currentPlayer()).flatMap(p => employ(false, 4 - p.workers.length).affect),
                 available: game => {
                     const player = getCurrentPlayer(game);
-                    return player != undefined && player.workers.employed < 4;
+                    return player != undefined && player.workers.length < 4;
                 }
             }
         case "大学":
             return {
-                affect: lift(currentPlayer()).flatMap(p => employ(false, 5 - p.workers.employed).affect),
+                affect: lift(currentPlayer()).flatMap(p => employ(false, 5 - p.workers.length).affect),
                 available: game => {
                     const player = getCurrentPlayer(game);
-                    return player != undefined && player.workers.employed < 5;
+                    return player != undefined && player.workers.length < 5;
                 }
             }
         case "専門学校":
@@ -108,7 +108,7 @@ export function cardEffect(card: CardName, indexOnHand?: number): CardEffectType
                 available: game => {
                     const current = getCurrentPlayer(game);
                     return current?.id != undefined && 
-                        game.board.publicBuildings.find(b => b.card == "鉱山" && b.workersOwner.includes(current?.id)) != undefined;
+                        game.board.publicBuildings.find(b => b.card == "鉱山" && b.workers.findIndex(w => w.owner == current.id) != -1) != undefined;
                 }
             }
         case "宝くじ":

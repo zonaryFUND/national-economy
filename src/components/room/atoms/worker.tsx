@@ -1,12 +1,13 @@
 import * as React from "react";
-import { PlayerIdentifier } from "model/protocol/game/player";
+import { PlayerIdentifier, WorkerType } from "model/protocol/game/player";
 import * as style from "./worker.module.styl";
 import { GameProps, withGame } from "../context/game";
 
-export type WorkerStatus = "fetched" | "onestate" | "training" | "empty";
+export type WorkerStatus = "fetched" | "onestate" | "empty";
 
 interface Props extends GameProps {
     owner: PlayerIdentifier;
+    type: WorkerType;
     status?: WorkerStatus;
 }
 
@@ -22,19 +23,21 @@ const worker: React.FC<Props> = props => {
 
     const title = (() => {
         switch (props.status) {
-            case "fetched":     return "派遣済みの労働者です。";
+            case "fetched":     return `派遣済みの${props.type == "human" ? "労働者" : "自動人形"}です。`;
             case "onestate":    
                 const player = Object.values(props.game.board.players).find(p => p.id == props.owner);
-                return `${player?.name || props.owner}が派遣した労働者です。`;
-            case "training":    return "研修中の労働者です。派遣はできませんが、賃金は満額発生します。";
+                return `${player?.name || props.owner}が派遣した${props.type == "human" ? "労働者" : "自動人形"}です。`;
             case "empty":       return "空席です。この数だけ労働者を追加雇用できます。";
-            case undefined:     return "未派遣の労働者です。";
+            case undefined:     
+                if (props.type == "training-human") return "研修中の労働者です。派遣はできませんが、賃金は満額発生します。";
+                return `未派遣の${props.type == "human" ? "労働者" : "自動人形"}です。${props.type == "human" ? "" : "自動人形は給与を要求せず、研修も必要ありません。"}`;
         }
     })();
 
     const src = (() => {
-        if (props.status == "training") return "https://3.bp.blogspot.com/-qRt6UrnektI/Wc8f7Ps8Y5I/AAAAAAABHJQ/0fvRqb00sYgut77lyvAp0W8nMfeZAcf4wCLcBGAs/s400/study_man_normal.png";
+        if (props.type == "training-human") return "https://3.bp.blogspot.com/-qRt6UrnektI/Wc8f7Ps8Y5I/AAAAAAABHJQ/0fvRqb00sYgut77lyvAp0W8nMfeZAcf4wCLcBGAs/s400/study_man_normal.png";
         if (props.status == "empty") return undefined;
+        if (props.type == "automata") return "https://2.bp.blogspot.com/-ZwYKR5Zu28s/U6Qo2qAjsqI/AAAAAAAAhkM/HkbDZEJwvPs/s400/omocha_robot.png";
         return "https://4.bp.blogspot.com/-FkxvQEt8SFY/UZmB90dIsvI/AAAAAAAATYo/pzQe_1qm0mc/s400/job_kouji.png";
     })();
 

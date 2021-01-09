@@ -3,7 +3,7 @@ import * as style from "./player.module.styl";
 import Worker, { WorkerStatus } from "./atoms/worker";
 import { calcScore } from "model/interaction/game/score";
 import { GameProps, withGame } from "./context/game";
-import { PlayerIdentifier } from "model/protocol/game/player";
+import { PlayerIdentifier, WorkerType } from "model/protocol/game/player";
 import { InRoundState } from "model/protocol/game/state";
 import { SeatContext, SeatProps } from "./fire";
 const money = require("public/money.svg");
@@ -57,7 +57,7 @@ const player: React.FC<Props> = props => {
     const isCurrent = (props.game.state as InRoundState).currentPlayer == props.id;
     const isStart = props.game.board.startPlayer == props.id;
 
-    const CWorker: React.FC<{status?: WorkerStatus}> = w => <Worker owner={shown.id} status={w.status} />;
+    const CWorker: React.FC<{status?: WorkerStatus, type: WorkerType}> = w => <Worker owner={shown.id} status={w.status} type={w.type} />;
 
 
 
@@ -74,14 +74,8 @@ const player: React.FC<Props> = props => {
             <section className={style.workers}>
                 <h3>労働者</h3>
                 <p>
-                    {[...Array(shown.workers.employed - shown.workers.available - shown.workers.training).keys()]
-                        .map(i => <CWorker status={"fetched"} key={i} />)}
-                    {[...Array(shown.workers.available).keys()]
-                        .map(i => <CWorker key={i} />)}
-                    {[...Array(shown.workers.training).keys()]
-                        .map(i => <CWorker status={"training"} key={i} />)}
-                    {[...Array(workersMax - shown.workers.employed).keys()]
-                        .map(i => <CWorker status={"empty"} key={i} />)}
+                    {shown.workers.map(w => <CWorker status={w.fetched ? "fetched" : undefined} type={w.type} />)}
+                    {[...Array(workersMax - shown.workers.length).keys()].map(i => <CWorker status="empty" type="human" key={i + shown.workers.length} />)}
                 </p>
             </section>
             <section className={style.wealth}>

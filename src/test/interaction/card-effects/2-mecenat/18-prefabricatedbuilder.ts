@@ -37,7 +37,7 @@ describe("プレハブ工務店", () => {
             ["redが芋畑を建設しました"],
             playerAffected(BlankBed, {
                 ...TestPlayerRed,
-                buildings: [{card: "芋畑", workersOwner: []}]
+                buildings: [{card: "芋畑", workers: []}]
             })
         ]);
     });

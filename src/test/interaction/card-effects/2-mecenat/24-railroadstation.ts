@@ -12,11 +12,11 @@ describe("鉄道駅", () => {
         const ngPlayer: Player = {
             ...TestPlayerRed,
             buildings: [
-                {card: "鉄道駅", workersOwner: []},
-                {card: "宝くじ", workersOwner: []},
-                {card: "宝くじ", workersOwner: []},
-                {card: "宝くじ", workersOwner: []},
-                {card: "宝くじ", workersOwner: []}
+                {card: "鉄道駅", workers: []},
+                {card: "宝くじ", workers: []},
+                {card: "宝くじ", workers: []},
+                {card: "宝くじ", workers: []},
+                {card: "宝くじ", workers: []}
             ]
         };
         assertBonus(playerAffected(BlankBed, ngPlayer), 0);
@@ -24,12 +24,12 @@ describe("鉄道駅", () => {
         const okPlayer: Player = {
             ...TestPlayerRed,
             buildings: [
-                {card: "鉄道駅", workersOwner: []},
-                {card: "宝くじ", workersOwner: []},
-                {card: "宝くじ", workersOwner: []},
-                {card: "宝くじ", workersOwner: []},
-                {card: "宝くじ", workersOwner: []},
-                {card: "宝くじ", workersOwner: []}
+                {card: "鉄道駅", workers: []},
+                {card: "宝くじ", workers: []},
+                {card: "宝くじ", workers: []},
+                {card: "宝くじ", workers: []},
+                {card: "宝くじ", workers: []},
+                {card: "宝くじ", workers: []}
             ]
         };
         assertBonus(playerAffected(BlankBed, okPlayer), 18);

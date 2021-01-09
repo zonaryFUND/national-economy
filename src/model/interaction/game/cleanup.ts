@@ -43,7 +43,7 @@ export function cleanupEndBoundary(endRound: State<Game, EffectLog>): State<Game
 
 export function isLegalSelling(game: Game, id: PlayerIdentifier, sold: number[]): boolean {
     const player = Object.values(game.board.players).find(p => p.id == id)!;
-    const lack = wage(game.board.currentRound) * player.workers.employed - player.cash;
+    const lack = wage(game.board.currentRound) * player.workers.filter(w => w.type != "automata").length - player.cash;
     const values = player.buildings.filter((_, i) => sold.includes(i)).map(b => cardFactory(b.card).score || 0);
     const earned = values.reduce((p, c) => p + c, 0);
 
@@ -64,7 +64,7 @@ export function resolveSelling(id: PlayerIdentifier, sold: number[]): State<Game
                 cash: targetPlayer.cash + earnings,
                 buildings: targetPlayer.buildings.filter((_, i) => !sold.includes(i))
             };
-            const added = soldBuildings.map(c => ({card: c, workersOwner: []}));
+            const added = soldBuildings.map(c => ({card: c, workers: []}));
             const boardTo = playerAffected({
                 ...game.board,
                 soldBuildings: game.board.soldBuildings.concat(...added)
@@ -135,7 +135,7 @@ function playerAffected(on: Board, player: Player): Board {
 
 function playerCleanup(player: Player, wage: number): {status: ExRoundPlayerStatus, effect: State<Board, EffectLog>} {
     const effectStart = State.get<Board>();
-    const paid = player.workers.employed * wage;
+    const paid = player.workers.filter(w => w.type != "automata").length * wage;
     const sellableBuildings = player.buildings.filter(b => {
         const card = cardFactory(b.card);
         return !card.buildingType.includes("unsellable") && card.cost != undefined;

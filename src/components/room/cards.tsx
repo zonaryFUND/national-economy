@@ -16,7 +16,7 @@ const hand: React.FC<Props> = props => {
     const cards = props.cards ? props.cards.map((c, i) => <Card card={c} key={`${i}-${c}`} />) : null;
     const buildings = props.buildings ? props.buildings.map((b, i) => (
         <Card card={b.card} key={`${i}-${b.card}`}>
-            <Workers owners={b.workersOwner} />
+            <Workers workers={b.workers} />
         </Card>
     )) : null;
 

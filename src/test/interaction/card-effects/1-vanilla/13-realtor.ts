@@ -11,11 +11,11 @@ describe("不動産屋", () => {
         const player: Player = {
             ...TestPlayerRed,
             buildings: [
-                {card: "不動産屋", workersOwner: []},
-                {card: "珈琲店", workersOwner: []},
-                {card: "ゼネコン", workersOwner: []},
-                {card: "邸宅", workersOwner: []},
-                {card: "農協", workersOwner: []}
+                {card: "不動産屋", workers: []},
+                {card: "珈琲店", workers: []},
+                {card: "ゼネコン", workers: []},
+                {card: "邸宅", workers: []},
+                {card: "農協", workers: []}
             ]
         };
 

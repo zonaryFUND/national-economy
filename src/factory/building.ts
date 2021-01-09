@@ -173,7 +173,7 @@ export const Union: Card = {
     description: "終了時：労働者1人につき+6点\n売却不可",
     buildingType: ["unsellable"],
     score: 0,
-    bonusScore: player => player.workers.employed * 6
+    bonusScore: player => player.workers.length * 6
 };
 
 export const CarFactory: Card = {

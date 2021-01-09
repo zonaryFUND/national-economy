@@ -11,7 +11,7 @@ describe("鉄工所", () => {
         board: {
             ...BlankBed.board,
             deck: ["食堂", "養殖場"],
-            publicBuildings: [{card: "鉱山", workersOwner: ["red"]}]
+            publicBuildings: [{card: "鉱山", workers: [{owner: "red", type: "human"}]}]
         }
     };
     it("鉱山に自分の労働者がいれば使用可能", () => {
@@ -24,7 +24,7 @@ describe("鉄工所", () => {
             ...BlankBed,
             board: {
                 ...BlankBed.board,
-                publicBuildings: [{card: "鉱山", workersOwner: ["blue"]}]
+                publicBuildings: [{card: "鉱山", workers: [{owner: "blue", type: "human"}]}]
             }
         }, ironworks);
     });

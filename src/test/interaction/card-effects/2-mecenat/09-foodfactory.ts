@@ -65,8 +65,8 @@ describe("食品工場", () => {
         const buildCommand = carpenter.command.name as BuildRequest;
 
         assert.equal(buildCommand.costCalclator("食品工場", 
-        {...TestPlayerRed, buildings: [{card: "造船所", workersOwner: []}]}), 2, "通常コストが異なる");
+        {...TestPlayerRed, buildings: [{card: "造船所", workers: []}]}), 2, "通常コストが異なる");
         assert.equal(buildCommand.costCalclator("食品工場", 
-        {...TestPlayerRed, buildings: [{card: "芋畑", workersOwner: []}]}), 1, "軽減後コストが異なる");
+        {...TestPlayerRed, buildings: [{card: "芋畑", workers: []}]}), 1, "軽減後コストが異なる");
     });
 });

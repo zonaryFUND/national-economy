@@ -27,7 +27,7 @@ export function handToBuildings(targets: number[]): State<Player, CardName[]> {
             .get<Player>()
             .modify(p => ({
                 ...p, 
-                buildings: p.buildings.concat(cards.map(c => ({card: c, workersOwner: []})))
+                buildings: p.buildings.concat(cards.map(c => ({card: c, workers: []})))
             }))
             .map(_ => cards)
         );

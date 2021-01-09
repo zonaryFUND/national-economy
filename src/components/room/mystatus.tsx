@@ -17,7 +17,7 @@ const mystatus: React.FC<GameProps> = props => {
         .filter(c => !c.buildingType.includes("unsellable"))
         .map(c => c.score || 0)
         .reduce((prev, current) => prev + current, 0);
-    const paidWage = wage(props.game.board.currentRound) * me.workers.employed;
+    const paidWage = wage(props.game.board.currentRound) * me.workers.filter(w => w.type != "automata").length;
     const currentOnInRound = (props.game.state as InRoundState).currentPlayer != undefined;
 
     return (

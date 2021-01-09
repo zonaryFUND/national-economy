@@ -17,10 +17,10 @@ describe("地球建設", () => {
                     ...TestPlayerRed,
                     hand: ["観光牧場", "工業団地", "墓地", "消費財"],
                     buildings: [
-                        {card: "工業団地", workersOwner: []},
-                        {card: "工業団地", workersOwner: []},
-                        {card: "工業団地", workersOwner: []},
-                        {card: "工業団地", workersOwner: []}
+                        {card: "工業団地", workers: []},
+                        {card: "工業団地", workers: []},
+                        {card: "工業団地", workers: []},
+                        {card: "工業団地", workers: []}
                     ]
                 }
             }
@@ -71,12 +71,12 @@ describe("地球建設", () => {
                             ...TestPlayerRed,
                             hand: ["墓地", "大聖堂", "投資銀行"],
                             buildings: [
-                                {card: "工業団地", workersOwner: []},
-                                {card: "工業団地", workersOwner: []},
-                                {card: "工業団地", workersOwner: []},
-                                {card: "工業団地", workersOwner: []},
-                                {card: "工業団地", workersOwner: []},
-                                {card: "墓地", workersOwner: []}
+                                {card: "工業団地", workers: []},
+                                {card: "工業団地", workers: []},
+                                {card: "工業団地", workers: []},
+                                {card: "工業団地", workers: []},
+                                {card: "工業団地", workers: []},
+                                {card: "墓地", workers: []}
                             ]
                         }
                     }
@@ -106,12 +106,12 @@ describe("地球建設", () => {
                             ...TestPlayerRed,
                             hand: ["消費財"],
                             buildings: [
-                                {card: "工業団地", workersOwner: []},
-                                {card: "工業団地", workersOwner: []},
-                                {card: "工業団地", workersOwner: []},
-                                {card: "工業団地", workersOwner: []},
-                                {card: "工業団地", workersOwner: []},
-                                {card: "墓地", workersOwner: []}
+                                {card: "工業団地", workers: []},
+                                {card: "工業団地", workers: []},
+                                {card: "工業団地", workers: []},
+                                {card: "工業団地", workers: []},
+                                {card: "工業団地", workers: []},
+                                {card: "墓地", workers: []}
                             ]
                         }
                     }

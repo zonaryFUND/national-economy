@@ -67,7 +67,7 @@ describe("宮大工", () => {
                         0: {
                             ...TestPlayerRed,
                             hand: ["石油コンビナート", "消費財"],
-                            buildings: [{card: "墓地", workersOwner: []}],
+                            buildings: [{card: "墓地", workers: []}],
                             victoryToken: 1
                         },
                         1: TestPlayerBlue

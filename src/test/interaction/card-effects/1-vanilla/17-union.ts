@@ -10,12 +10,8 @@ describe("労働組合", () => {
     it("ボーナスとして雇用された労働者x6点を得る", () => {
         const player: Player = {
             ...TestPlayerRed,
-            workers: {
-                available: 0,
-                training: 0,
-                employed: 5
-            },
-            buildings: [{card: "労働組合", workersOwner: []}]
+            workers: [{type: "human", fetched: true}, {type: "human", fetched: true}, {type: "human", fetched: true}, {type: "human", fetched: true}, {type: "human", fetched: true}],
+            buildings: [{card: "労働組合", workers: []}]
         };
 
         assertBonus(playerAffected(BlankBed, player), 30);

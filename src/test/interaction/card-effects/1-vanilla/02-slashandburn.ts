@@ -12,7 +12,7 @@ describe("", () => {
             players: [
                 {
                     ...TestPlayerRed,
-                    buildings: [{card: "レストラン", workersOwner: ["red"]}, {card: "焼畑", workersOwner: []}]
+                    buildings: [{card: "レストラン", workers: [{owner: "red", type: "human"}]}, {card: "焼畑", workers: []}]
                 },
                 TestPlayerBlue
             ]
@@ -38,7 +38,7 @@ describe("", () => {
                         {
                             ...TestPlayerRed,
                             hand: ["消費財", "消費財", "消費財", "消費財", "消費財"],
-                            buildings: [{card: "レストラン", workersOwner: ["red"]}]
+                            buildings: [{card: "レストラン", workers: [{owner: "red", type: "human"}]}]
                         },
                         TestPlayerBlue
                     ]

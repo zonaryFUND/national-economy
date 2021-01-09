@@ -45,7 +45,7 @@ describe("工業団地", () => {
         const buildCommand = carpenter.command.name as BuildRequest;
 
         function assertWithBuildings(cards: CardName[], cost: number) {
-            const buildings: Building[] = cards.map(c => ({card: c, workersOwner: []}));
+            const buildings: Building[] = cards.map(c => ({card: c, workers: []}));
             assert.equal(
                 buildCommand.costCalclator("工業団地", {...TestPlayerRed, buildings: buildings}),
                 cost,

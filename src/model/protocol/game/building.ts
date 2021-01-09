@@ -1,7 +1,7 @@
 import { CardName } from "./card";
-import { PlayerIdentifier } from "./player";
+import { PlayerIdentifier, WorkerType } from "./player";
 
 export interface Building {
     card: CardName;
-    workersOwner: PlayerIdentifier[];
+    workers: {owner: PlayerIdentifier, type: WorkerType}[];
 }

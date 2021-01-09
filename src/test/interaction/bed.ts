@@ -10,11 +10,7 @@ import { calcScore } from "model/interaction/game/score";
 export const TestPlayerRed: Player = {
     id: "red",
     hand: [],
-    workers: {
-        available: 2,
-        training: 0,
-        employed: 2
-    },
+    workers: [{type: "human", fetched: false}, {type: "human", fetched: false}],
     buildings: [],
     cash: 0,
     reservedCards: [],

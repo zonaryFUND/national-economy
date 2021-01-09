@@ -31,7 +31,7 @@ describe("設計事務所", () => {
                 ...availableBed,
                 board: {
                     ...availableBed.board,
-                    soldBuildings: [{card: "設計事務所", workersOwner: []}]
+                    soldBuildings: [{card: "設計事務所", workers: []}]
                 }
             },
             shuffle: array => array
@@ -44,17 +44,14 @@ describe("設計事務所", () => {
             board: {
                 ...io.game.board,
                 deck: [],
-                soldBuildings: [{card: "設計事務所", workersOwner: ["red"]}],
-                players: {
-                    0: {
+                soldBuildings: [{card: "設計事務所", workers: [{owner: "red", type: "human"}]}],
+                players: [
+                    {
                         ...TestPlayerRed,
-                        workers: {
-                            ...TestPlayerRed.workers,
-                            available: 1
-                        }
+                        workers: [{type: "human", fetched: true}, {type: "human", fetched: false}]
                     },
-                    1: TestPlayerBlue
-                }
+                    TestPlayerBlue
+                ]
             },
             state: {
                 currentPlayer: "red",

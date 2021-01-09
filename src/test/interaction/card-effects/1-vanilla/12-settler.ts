@@ -52,7 +52,7 @@ describe("開拓民", () => {
                     players: [
                         {
                             ...TestPlayerRed,
-                            buildings: [{card: "農場", workersOwner: []}]
+                            buildings: [{card: "農場", workers: []}]
                         },
                         TestPlayerBlue
                     ]

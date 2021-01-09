@@ -15,11 +15,7 @@ export function launch(players: string[], lineup?: "original" | "mecenat" | "glo
             id: id,
             name: players[i],
             hand: deck.slice(3 * i, 3 * (i + 1)),
-            workers: {
-                available: 2,
-                training: 0,
-                employed: 2
-            },
+            workers: [{type: "human", fetched: false}, {type: "human", fetched: false}],
             buildings: [],
             cash: 5 + i,
             reservedCards: [],
@@ -37,7 +33,7 @@ export function launch(players: string[], lineup?: "original" | "mecenat" | "glo
             houseHold: 0,
             players: p,
             startPlayer: attendants[0],
-            publicBuildings: publicBuildings(players.length).map(c => ({card: c, workersOwner: []})),
+            publicBuildings: publicBuildings(players.length).map(c => ({card: c, workers: []})),
             soldBuildings: []
         },
         state: {

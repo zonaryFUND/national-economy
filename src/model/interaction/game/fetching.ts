@@ -3,25 +3,25 @@ import { Game, getCurrentPlayer, GameIO } from "model/protocol/game/game";
 import { EffectLog, SyncEffect } from "./sync-effect";
 import { cardEffect, AsyncCardEffect } from "./card-effects";
 import { onCurrentPlayer, lift } from "./state-components";
-import { Player, PlayerIdentifier } from "model/protocol/game/player";
+import { Player, PlayerIdentifier, WorkerType } from "model/protocol/game/player";
 import { InRoundState } from "model/protocol/game/state";
 import { Building } from "model/protocol/game/building";
 import cardFactory from "factory/card";
-import { Board } from "model/protocol/game/board";
 import { playerAffected } from "./util";
 
 export function fetch(to: "occupied" | "public" | "sold", index: number, turnAround?: State<Game, EffectLog>): State<GameIO, EffectLog> {
     return lift(State.get<Game>())
         .flatMap(game => {
             const player = getCurrentPlayer(game)!;
+            const fetchedWorker = player.workers.find(w => !w.fetched)!.type;
             const targetCard = to == "public" ? game.board.publicBuildings[index].card : 
                                to == "sold" ? game.board.soldBuildings[index].card :
                                player.buildings[index].card;
             const effect = cardEffect(targetCard, to == "occupied" ? index : undefined);
 
-            const fetchState = to == "occupied" ? onCurrentPlayer(fetchToOwned(index)).map(tuple => tuple[0]) :
-                               to == "sold" ? fetchToPublic("sold", index) :
-                               fetchToPublic("public", index);
+            const fetchState = to == "occupied" ? onCurrentPlayer(fetchToOwned(index, fetchedWorker)).map(tuple => tuple[0]) :
+                               to == "sold" ? fetchToPublic("sold", index, fetchedWorker) :
+                               fetchToPublic("public", index, fetchedWorker);
 
             const sync = effect as SyncEffect;
             if (sync.affect != undefined) {
@@ -58,45 +58,44 @@ export function fetch(to: "occupied" | "public" | "sold", index: number, turnAro
         });
 }
 
-function fetchToOwned(index: number): State<Player, EffectLog> {
+function fetchToOwned(index: number, type: WorkerType): State<Player, EffectLog> {
     return State
         .get<Player>()
-        .flatMap(player => State
-            .put<Player>({
-                ...player,
-                workers: {
-                    ...player.workers,
-                    available: player.workers.available - 1
-                },
-                buildings: player.buildings.map((b, i) => {
-                    if (i != index) return b;
-                    return {
-                        card: b.card,
-                        workersOwner: b.workersOwner.concat(player.id)
-                    };
+        .flatMap(player => {
+            const fetchedIndex = player.workers.findIndex(w => !w.fetched);
+            return State
+                .put<Player>({
+                    ...player,
+                    workers: player.workers.map((w, i) => i != fetchedIndex ? w : {...w, fetched: true}),
+                    buildings: player.buildings.map((b, i) => {
+                        if (i != index) return b;
+                        return {
+                            card: b.card,
+                            workers: b.workers.concat({owner: player.id, type: type})
+                        };
+                    })
                 })
-            })
-            .map(_ => [`${player.name || player.id}が所有する${player.buildings[index].card}に労働者を派遣しました`])
-        );
+                .map(_ => [`${player.name || player.id}が所有する${player.buildings[index].card}に労働者を派遣しました`]);
+        });
 }
 
-function fetchToPublic(to: "sold" | "public", index: number): State<Game, EffectLog> {
+function fetchToPublic(to: "sold" | "public", index: number, type: WorkerType): State<Game, EffectLog> {
     const playerEffect = State
         .get<Player>()
-        .modify(p => ({
-            ...p,
-            workers: {
-                ...p.workers,
-                available: p.workers.available - 1
-            }
-        }));
+        .modify(p => {
+            const fetchedIndex = p.workers.findIndex(w => !w.fetched);
+            return {
+                ...p,
+                workers: p.workers.map((w, i) => i != fetchedIndex ? w : {...w, fetched: true})
+            };
+        });
 
     const fetched = (buildings: Building[], id: PlayerIdentifier) =>
         buildings.map((b, i) => {
             if (i != index) return b;
             return {
                 card: b.card,
-                workersOwner: b.workersOwner.concat(id)
+                workers: b.workers.concat({owner: id, type: type})
             };
         });
 
@@ -133,8 +132,8 @@ export function fetchable(to: "occupied" | "public" | "sold", index: number): St
             })();
 
             const players = Object.values(game.board.players);
-            if (target.workersOwner.length > 0 && !cardFactory(target.card, players.length).canAcceptMultiWorkers) {
-                const autochthon = players.find(p => p.id == target.workersOwner[0])!;
+            if (target.workers.length > 0 && !cardFactory(target.card, players.length).canAcceptMultiWorkers) {
+                const autochthon = players.find(p => p.id == target.workers[0].owner)!;
                 return `すでに${autochthon.name || autochthon.id}の労働者が働いています`;
             }
             
@@ -169,12 +168,10 @@ export const cancelFetching: State<GameIO, EffectLog> = (() => {
 })();
 
 function removeEffectingWorker(game: Game, to: "mine" | "public" | "sold", index: number, player: Player): Game {
+    const fetchingIndex = player.workers.reduce((p, w) => w.fetched ? (p + 1) : p, 0) - 1;
     const workerAdjusted: Player = {
         ...player,
-        workers: {
-            ...player.workers,
-            available: player.workers.available + 1
-        }
+        workers: player.workers.map((w, i) => i != fetchingIndex ? w : {...w, fetched: false})
     };
     const prev = playerAffected(game, workerAdjusted);
 
@@ -184,7 +181,7 @@ function removeEffectingWorker(game: Game, to: "mine" | "public" | "sold", index
                 ...workerAdjusted,
                 buildings: workerAdjusted.buildings.map((b, i) => ({
                     card: b.card,
-                    workersOwner: i != index ? b.workersOwner : b.workersOwner.slice(0, b.workersOwner.length - 2)
+                    workers: i != index ? b.workers : b.workers.slice(0, b.workers.length - 2)
                 }))
             };
             return playerAffected(prev, to)
@@ -195,7 +192,7 @@ function removeEffectingWorker(game: Game, to: "mine" | "public" | "sold", index
                     ...prev.board,
                     publicBuildings: prev.board.publicBuildings.map((b, i) => ({
                         card: b.card,
-                        workersOwner: i != index ? b.workersOwner : b.workersOwner.slice(0, b.workersOwner.length - 2)
+                        workers: i != index ? b.workers : b.workers.slice(0, b.workers.length - 2)
                     }))
                 }
             }
@@ -206,7 +203,7 @@ function removeEffectingWorker(game: Game, to: "mine" | "public" | "sold", index
                     ...prev.board,
                     soldBuildings: prev.board.soldBuildings.map((b, i) => ({
                         card: b.card,
-                        workersOwner: i != index ? b.workersOwner : b.workersOwner.slice(0, b.workersOwner.length - 2)
+                        workers: i != index ? b.workers : b.workers.slice(0, b.workers.length - 2)
                     }))
                 }
             }

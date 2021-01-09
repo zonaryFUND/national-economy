@@ -11,12 +11,12 @@ describe("鉄道", () => {
         const player: Player = {
             ...TestPlayerRed,
             buildings: [
-                {card: "鉄道", workersOwner: []},
-                {card: "工場", workersOwner: []},
-                {card: "製鉄所", workersOwner: []},
-                {card: "自動車工場", workersOwner: []},
-                {card: "化学工場", workersOwner: []},
-                {card: "農場", workersOwner: []}
+                {card: "鉄道", workers: []},
+                {card: "工場", workers: []},
+                {card: "製鉄所", workers: []},
+                {card: "自動車工場", workers: []},
+                {card: "化学工場", workers: []},
+                {card: "農場", workers: []}
             ]
         };
 

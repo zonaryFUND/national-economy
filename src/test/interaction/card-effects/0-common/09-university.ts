@@ -13,11 +13,7 @@ describe("大学", () => {
 
     const fiveWorkersPlayer: Player = {
         ...TestPlayerRed,
-        workers: {
-            available: 5,
-            training: 0,
-            employed: 5
-        }
+        workers: [{type: "human", fetched: false}, {type: "human", fetched: false}, {type: "human", fetched: false}, {type: "human", fetched: false}, {type: "human", fetched: false}]
     };
 
     it("労働者5人いると使用不可能", () => {
@@ -28,7 +24,7 @@ describe("大学", () => {
     it("労働者5人いると社宅があっても使用不可能", () => {
         const fiveWorkersAndHousingPlayer: Player = {
             ...fiveWorkersPlayer,
-            buildings: [{card: "社宅", workersOwner: []}],
+            buildings: [{card: "社宅", workers: []}],
         };
         const bed = playerAffected(BlankBed, fiveWorkersAndHousingPlayer);
         unavailable(bed, university);
@@ -41,11 +37,7 @@ describe("大学", () => {
             ],
             playerAffected(BlankBed, {
                 ...TestPlayerRed,
-                workers: {
-                    available: TestPlayerRed.workers.available,
-                    training: TestPlayerRed.workers.training + 3,
-                    employed: 5
-                }
+                workers: TestPlayerRed.workers.concat({type: "training-human", fetched: false}, {type: "training-human", fetched: false}, {type: "training-human", fetched: false})
             })
         ]);
     });

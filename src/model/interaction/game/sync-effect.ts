@@ -1,5 +1,5 @@
 import { Game, GameIO } from "model/protocol/game/game";
-import { Player } from "model/protocol/game/player";
+import { Player, Worker } from "model/protocol/game/player";
 import { maxWorkers, getCurrentPlayer } from "./util";
 import { Board } from "model/protocol/game/board";
 import State from "monad/state/state";
@@ -93,16 +93,9 @@ export function build(targetHandIndices: number[]): SyncEffect {
 }
 
 export function employ(workReady: boolean, amount?: number): SyncEffect {
+    const newComers = [...Array(amount)].map(_ => ({type: workReady ? "human" : "training-human", fetched: false} as Worker));
     const playerEffect = State.get<Player>()
-                    .modify(p => {
-                        const workers = {
-                            available: p.workers.available + (workReady ? 1 : 0),
-                            training: p.workers.training + (workReady ? 0 : (amount || 1)),
-                            employed: p.workers.employed + (amount || 1)
-                        };
-
-                        return {...p, workers: workers};
-                    });
+                    .modify(p => ({...p, workers: p.workers.concat(newComers)}));
     const affect = onCurrentPlayer(playerEffect)
                 .map(tuple => [`${tuple[1].name || tuple[1].id}が労働者${amount || 1}人を${workReady ? "即戦力として" : "研修中として"}雇用しました`]);
 
@@ -111,7 +104,7 @@ export function employ(workReady: boolean, amount?: number): SyncEffect {
         available: game => {
             const current = getCurrentPlayer(game);
             if (!current) return false;
-            return maxWorkers(current) > current.workers.employed;
+            return maxWorkers(current) > current.workers.length;
         }
     };
 }

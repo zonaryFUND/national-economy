@@ -44,11 +44,7 @@ describe("ターン終了", () => {
                     TestPlayerRed,
                     {
                         ...TestPlayerBlue,
-                        workers: {
-                            available: 0,
-                            training: 0,
-                            employed: 2
-                        }
+                        workers: [{type: "human", fetched: true}, {type: "human", fetched: true}]
                     },
                     {
                         ...TestPlayerRed,
@@ -77,19 +73,11 @@ describe("ターン終了", () => {
                 players: [
                     {
                         ...TestPlayerRed,
-                        workers: {
-                            available: 0,
-                            training: 0,
-                            employed: 2
-                        }
+                        workers: [{type: "human", fetched: true}, {type: "human", fetched: true}]
                     },
                     {
                         ...TestPlayerBlue,
-                        workers: {
-                            available: 0,
-                            training: 0,
-                            employed: 2
-                        }
+                        workers: [{type: "human", fetched: true}, {type: "training-human", fetched: false}]
                     }
                 ]
             }

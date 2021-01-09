@@ -135,7 +135,7 @@ describe("ゼネコン", () => {
                         {
                             ...TestPlayerRed,
                             hand: ["消費財", "自動車工場", "農場"],
-                            buildings: [{card: "工場", workersOwner: []}]
+                            buildings: [{card: "工場", workers: []}]
                         },
                         TestPlayerBlue
                     ]

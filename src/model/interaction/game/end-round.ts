@@ -5,7 +5,7 @@ import { Building } from "model/protocol/game/building";
 import { Player } from "model/protocol/game/player";
 
 function removeWorkers(buildings: Building[]): Building[] {
-    return buildings.map(b => ({card: b.card, workersOwner: []}));
+    return buildings.map(b => ({card: b.card, workers: []}));
 }
 
 export function endRound(finish: State<Game, EffectLog>): State<Game, EffectLog> {
@@ -53,17 +53,13 @@ export function endRound(finish: State<Game, EffectLog>): State<Game, EffectLog>
             const players = Object.values(game.board.players);
             const start = players.find(p => p.id == game.board.startPlayer);
             const trainingDone = players
-                .filter(p => p.workers.training > 0)
-                .map(p => `${p.name || p.id}の新入社員${p.workers.training}人が研修を終えました`);
+                .filter(p => p.workers.filter(w => w.type == "training-human").length > 0)
+                .map(p => `${p.name || p.id}の新入社員${p.workers.filter(w => w.type == "training-human").length}人が研修を終えました`);
 
             const affectedPlayers = players
                 .map(player => ({
                     ...player,
-                    workers: {
-                        available: player.workers.employed,
-                        training: 0,
-                        employed: player.workers.employed
-                    },
+                    workers: player.workers.map(w => ({type: w.type == "training-human" ? "human" : w.type, fetched: false})),
                     buildings: removeWorkers(player.buildings)
                 }))
                 .reduce((prev, current, i) => ({...prev, [i]: current}), {});

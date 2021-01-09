@@ -30,5 +30,5 @@ export function lackedCash(props: GameProps): number | undefined {
     if (props.me == undefined) return undefined;
     if ((props.game.state as ExRoundState)[props.me] != "selling") return undefined;
     const me = Object.values(props.game.board.players).find(p => p.id == props.me)!;
-    return wage(props.game.board.currentRound) * me.workers.employed - me.cash;
+    return wage(props.game.board.currentRound) * me.workers.filter(w => w.type != "automata").length - me.cash;
 }

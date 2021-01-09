@@ -12,7 +12,7 @@ describe("会計事務所", () => {
         const player: Player = {
             ...TestPlayerRed,
             victoryToken: 8,
-            buildings: [{card: "会計事務所", workersOwner: []}]
+            buildings: [{card: "会計事務所", workers: []}]
         };
 
         assertBonus(playerAffected(BlankBed, player), 22);

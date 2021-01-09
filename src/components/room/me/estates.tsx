@@ -48,7 +48,7 @@ const estates: React.FC<GameProps & GatewayProps> = props => {
                         undefined;
         return (
             <Card card={b.card} key={`${i}-${b.card}`} onClick={onClick}>
-                <Workers owners={b.workersOwner} />
+                <Workers workers={b.workers} />
                 {selected.includes(i) ? <div className={`${selectStyle.overlay} ${selectStyle.selected}`} /> : null}
             </Card>
         );

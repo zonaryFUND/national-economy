@@ -11,12 +11,8 @@ import { Board } from "model/protocol/game/board";
 describe("労働者の派遣", () => {
     const currentRed: Player = {
         ...TestPlayerRed,
-        buildings: [{card: "珈琲店", workersOwner: []}, {card: "レストラン", workersOwner: []}],
-        workers: {
-            available: 2,
-            training: 0,
-            employed: 2
-        }
+        buildings: [{card: "珈琲店", workers: []}, {card: "レストラン", workers: []}],
+        workers: [{type: "human", fetched: false}, {type: "human", fetched: false}]
     };
     const publicBed: Game = {
         ...BlankBed,
@@ -24,8 +20,8 @@ describe("労働者の派遣", () => {
             ...BlankBed.board,
             houseHold: 20,
             deck: ["製鉄所"],
-            publicBuildings: [{card: "鉱山", workersOwner: []}, {card: "露店", workersOwner: []}],
-            soldBuildings: [{card: "ゼネコン", workersOwner: []}, {card: "工場", workersOwner: []}]
+            publicBuildings: [{card: "鉱山", workers: []}, {card: "露店", workers: []}],
+            soldBuildings: [{card: "ゼネコン", workers: []}, {card: "工場", workers: []}]
         }
     };
     const io: GameIO = {
@@ -47,16 +43,12 @@ describe("労働者の派遣", () => {
                 ...publicBed.board,
                 deck: [],
                 houseHold: 20,
-                publicBuildings: [{card: "鉱山", workersOwner: ["red"]}, {card: "露店", workersOwner: []}],
+                publicBuildings: [{card: "鉱山", workers: [{owner: "red", type: "human"}]}, {card: "露店", workers: []}],
                 players: [
                     {
                         ...currentRed,
                         hand: ["製鉄所"],
-                        workers: {
-                            available: 1,
-                            training: 0,
-                            employed: 2
-                        }
+                        workers: [{type: "human", fetched: true}, {type: "human", fetched: false}]
                     },
                     TestPlayerBlue
                 ]
@@ -81,12 +73,8 @@ describe("労働者の派遣", () => {
                     {
                         ...currentRed,
                         cash: 5,
-                        buildings: [{card: "珈琲店", workersOwner: ["red"]}, {card: "レストラン", workersOwner: []}],
-                        workers: {
-                            available: 1,
-                            training: 0,
-                            employed: 2
-                        }
+                        buildings: [{card: "珈琲店", workers: [{owner: "red", type: "human"}]}, {card: "レストラン", workers: []}],
+                        workers: [{type: "human", fetched: true}, {type: "human", fetched: false}]
                     },
                     TestPlayerBlue
                 ]
@@ -105,15 +93,11 @@ describe("労働者の派遣", () => {
             ...publicBed,
             board: {
                 ...publicBed.board,
-                publicBuildings: [{card: "鉱山", workersOwner: []}, {card: "露店", workersOwner: ["red"]}],
+                publicBuildings: [{card: "鉱山", workers: []}, {card: "露店", workers: [{owner: "red", type: "human"}]}],
                 players: [
                     {
                         ...currentRed,
-                        workers: {
-                            available: 1,
-                            training: 0,
-                            employed: 2
-                        }
+                        workers: [{type: "human", fetched: true}, {type: "human", fetched: false}]
                     },
                     TestPlayerBlue
                 ]
@@ -153,15 +137,11 @@ describe("労働者の派遣", () => {
             ...publicBed,
             board: {
                 ...publicBed.board,
-                soldBuildings: [{card: "ゼネコン", workersOwner: []}, {card: "工場", workersOwner: ["red"]}],
+                soldBuildings: [{card: "ゼネコン", workers: []}, {card: "工場", workers: [{owner: "red", type: "human"}]}],
                 players: [
                     {
                         ...currentRed,
-                        workers: {
-                            available: 1,
-                            training: 0,
-                            employed: 2
-                        }
+                        workers: [{type: "human", fetched: true}, {type: "human", fetched: false}]
                     },
                     TestPlayerBlue
                 ],
@@ -205,12 +185,8 @@ describe("労働者の派遣", () => {
                 players: [
                     {
                         ...currentRed,
-                        buildings: [{card: "珈琲店", workersOwner: []}, {card: "レストラン", workersOwner: ["red"]}],
-                        workers: {
-                            available: 1,
-                            training: 0,
-                            employed: 2
-                        }
+                        buildings: [{card: "珈琲店", workers: []}, {card: "レストラン", workers: [{owner: "red", type: "human"}]}],
+                        workers: [{type: "human", fetched: true}, {type: "human", fetched: false}]
                     },
                     TestPlayerBlue
                 ]

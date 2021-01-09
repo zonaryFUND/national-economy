@@ -82,7 +82,7 @@ describe("建設会社", () => {
                 "消費財"
             ],
             buildings: [
-                {card: "農場", workersOwner: ["red"]}
+                {card: "農場", workers: [{owner: "red", type: "human"}]}
             ]
         };
         assertAffectResolve(
@@ -107,8 +107,8 @@ describe("建設会社", () => {
                                 ...TestPlayerRed,
                                 hand: ["化学工場"],
                                 buildings: [
-                                    {card: "農場", workersOwner: ["red"]},
-                                    {card: "大農園", workersOwner: []}
+                                    {card: "農場", workers: [{owner: "red", type: "human"}]},
+                                    {card: "大農園", workers: []}
                                 ]
                             },
                             TestPlayerBlue

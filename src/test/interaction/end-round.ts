@@ -15,19 +15,15 @@ describe("ラウンド終了処理", () => {
                 ...BlankBed.board,
                 currentRound: 1,
                 startPlayer: "blue",
-                publicBuildings: [{card: "採石場", workersOwner: ["red"]}],
-                soldBuildings: [{card: "果樹園", workersOwner: ["red"]}],
+                publicBuildings: [{card: "採石場", workers: [{owner: "red", type: "human"}]}],
+                soldBuildings: [{card: "果樹園", workers: [{owner: "red", type: "human"}]}],
                 players: [
                     {
                         ...TestPlayerRed,
-                        workers: {
-                            available: 0,
-                            training: 1,
-                            employed: 3
-                        },
+                        workers: [{type: "human", fetched: true}, {type: "human", fetched: true}, {type: "training-human", fetched: true}],
                         hand: ["食品工場"],
                         reservedCards: ["消費財", "消費財", "消費財", "消費財"],
-                        buildings: [{card: "ゼネコン", workersOwner: ["red"]}]
+                        buildings: [{card: "ゼネコン", workers: [{owner: "red", type: "human"}]}]
                     },
                     TestPlayerBlue
                 ]
@@ -50,18 +46,14 @@ describe("ラウンド終了処理", () => {
                 ...BlankBed.board,
                 currentRound: 2,
                 startPlayer: "blue",
-                publicBuildings: [{card: "採石場", workersOwner: []}],
-                soldBuildings: [{card: "果樹園", workersOwner: []}],
+                publicBuildings: [{card: "採石場", workers: []}],
+                soldBuildings: [{card: "果樹園", workers: []}],
                 players: [
                     {
                         ...TestPlayerRed,
-                        workers: {
-                            available: 3,
-                            training: 0,
-                            employed: 3
-                        },
+                        workers: [{type: "human", fetched: false}, {type: "human", fetched: false}, {type: "human", fetched: false}],
                         hand: ["食品工場", "消費財", "消費財", "消費財", "消費財"],
-                        buildings: [{card: "ゼネコン", workersOwner: []}]
+                        buildings: [{card: "ゼネコン", workers: []}]
                     },
                     TestPlayerBlue
                 ]

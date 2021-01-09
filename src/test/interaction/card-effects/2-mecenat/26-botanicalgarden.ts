@@ -12,10 +12,10 @@ describe("植物園", () => {
         const ngPlayer: Player = {
             ...TestPlayerRed,
             buildings: [
-                {card: "植物園", workersOwner: []},
-                {card: "芋畑", workersOwner: []},
-                {card: "菜園", workersOwner: []},
-                {card: "石油コンビナート", workersOwner: []},
+                {card: "植物園", workers: []},
+                {card: "芋畑", workers: []},
+                {card: "菜園", workers: []},
+                {card: "石油コンビナート", workers: []},
             ]
         };
         assertBonus(playerAffected(BlankBed, ngPlayer), 0);
@@ -23,10 +23,10 @@ describe("植物園", () => {
         const okPlayer: Player = {
             ...TestPlayerRed,
             buildings: [
-                {card: "植物園", workersOwner: []},
-                {card: "芋畑", workersOwner: []},
-                {card: "菜園", workersOwner: []},
-                {card: "旧市街", workersOwner: []},
+                {card: "植物園", workers: []},
+                {card: "芋畑", workers: []},
+                {card: "菜園", workers: []},
+                {card: "旧市街", workers: []},
             ]
         };
         assertBonus(playerAffected(BlankBed, okPlayer), 22);

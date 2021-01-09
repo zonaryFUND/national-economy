@@ -12,9 +12,9 @@ describe("輸出港", () => {
         const ngPlayer: Player = {
             ...TestPlayerRed,
             buildings: [
-                {card: "輸出港", workersOwner: []},
-                {card: "工業団地", workersOwner: []},
-                {card: "投資銀行", workersOwner: []}
+                {card: "輸出港", workers: []},
+                {card: "工業団地", workers: []},
+                {card: "投資銀行", workers: []}
             ]
         };
         assertBonus(playerAffected(BlankBed, ngPlayer), 0);
@@ -22,9 +22,9 @@ describe("輸出港", () => {
         const okPlayer: Player = {
             ...TestPlayerRed,
             buildings: [
-                {card: "輸出港", workersOwner: []},
-                {card: "工業団地", workersOwner: []},
-                {card: "旧市街", workersOwner: []}
+                {card: "輸出港", workers: []},
+                {card: "工業団地", workers: []},
+                {card: "旧市街", workers: []}
             ]
         };
         assertBonus(playerAffected(BlankBed, okPlayer), 24);

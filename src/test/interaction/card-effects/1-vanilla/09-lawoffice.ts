@@ -12,7 +12,7 @@ describe("法律事務所", () => {
             ...TestPlayerRed,
             penalty: 10,
             buildings: [
-                {card: "法律事務所", workersOwner: []}
+                {card: "法律事務所", workers: []}
             ]
         };
 
