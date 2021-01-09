@@ -1,4 +1,5 @@
 type PublicBuildingName = "採石場" | "鉱山" | "学校"| "大工" | "露店" | "市場" | "高等学校" | "スーパーマーケット" | "大学" | "百貨店" | "専門学校" | "万博";
+type GloryPublicBuildingName = "遺跡";
 type BuildingName = "農場" | "焼畑" | "設計事務所" | "珈琲店" | "果樹園" |
                     "工場" | "建設会社" | "倉庫" | "法律事務所" | "大農園" |
                     "レストラン" | "開拓民" | "不動産屋" | "製鉄所" | "ゼネコン" |
@@ -10,4 +11,10 @@ type MecenatBuildingName = "菜園" | "鉄工所" | "宝くじ" | "遊園地" | 
                            "工業団地" | "食堂" | "プレハブ工務店" | "養殖場" | "旧市街" |
                            "会計事務所" | "墓地" | "輸出港" | "鉄道駅" | "投資銀行" |
                            "植物園" | "博物館";
-export type CardName = PublicBuildingName | BuildingName | MecenatBuildingName | "消費財";
+type GloryBuildingName = "遺物" | "農村" | "植民団" | "工房" | "蒸気工場" |
+                         "養鶏場" | "摩天建設" | "ゲームカフェ" | "綿花農場" | "美術館" |
+                         "記念碑" | "消費者組合" | "機械人形" | "炭鉱" | "モダニズム建設" |
+                         "劇場" | "ギルドホール" | "象牙の塔" | "精錬所" | "転送装置" |
+                         "革命広場" | "収穫祭" | "技術展示会" | "温室" | "浄火の神殿" |
+                         "機関車工場";
+export type CardName = PublicBuildingName | GloryPublicBuildingName | BuildingName | MecenatBuildingName | GloryBuildingName | "消費財";

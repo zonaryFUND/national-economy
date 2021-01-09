@@ -7,6 +7,7 @@ export interface Card {
     name: CardName;
     type: "public" | "building" | "consumer-goods"
     cost: number | undefined;
+    onConstructed?: string;
     costReduction?: {
         description: string;
         to: (player: Player) => number;
