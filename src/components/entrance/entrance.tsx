@@ -72,7 +72,7 @@ const entrance: React.FC<Props> = props => {
                                 <td>カード間のシナジーを意識したセット</td>
                             </tr>
                             <tr>
-                                <td><label><input type="radio" name="type" id="mecenat" />グローリー</label></td>
+                                <td><label><input type="radio" name="type" id="glory" />グローリー</label></td>
                                 <td>機械人形の労働者を中心としたダイナミックなセット</td>
                             </tr>
                         </table>
