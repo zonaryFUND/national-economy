@@ -5,18 +5,25 @@ import * as selectStyle from "./select.styl";
 import { GameProps, withGame } from "../context/game";
 import { InRoundState, ExRoundState } from "model/protocol/game/state";
 import { cardEffect, AsyncCardEffect } from "model/interaction/game/card-effects";
-import { DisposeRequest, BuildRequest, MultiBuildRequest } from "model/interaction/game/async-command";
+import { DisposeRequest, BuildRequest, MultiBuildRequest, OptionsRequest } from "model/interaction/game/async-command";
 import { GatewayProps, withGateway } from "../context/gateway";
 import cardFactory from "factory/card";
 
 const hand: React.FC<GameProps & GatewayProps> = props => {
+    const [built, setBuilt] = React.useState<number[]>([]);
+    const [selected, setSelected] = React.useState<number[]>([]);
+
     const me = Object.values(props.game.board.players).find(p => p.id == props.me)!;
 
     const inRoundState = props.game.state as InRoundState;
     const currentEffect = (() => {
         if (inRoundState.currentPlayer == undefined) return undefined;
         if (inRoundState.currentPlayer != props.me) return undefined;
-        if (inRoundState.effecting == undefined) return undefined;
+        if (inRoundState.effecting == undefined) {
+            if (built.length > 0) setBuilt([]);
+            if (selected.length > 0) setSelected([]);
+            return undefined;
+        }
 
         const effect = cardEffect(inRoundState.effecting!.card) as AsyncCardEffect;
         if (effect.command.name == "design-office") return undefined;
@@ -26,8 +33,7 @@ const hand: React.FC<GameProps & GatewayProps> = props => {
     const exRoundState = props.game.state as ExRoundState;
     const discarding = props.me != undefined && exRoundState[props.me] == "discarding";
 
-    const [built, setBuilt] = React.useState<number[]>([]);
-    const [selected, setSelected] = React.useState<number[]>([]);
+
 
     const reset = () => {
         setBuilt([]);
@@ -139,6 +145,33 @@ const hand: React.FC<GameProps & GatewayProps> = props => {
                     reset();
                 }
                 const node = <><p>{`コストとして捨てるカードを${cost}枚選んでください`}</p><button onClick={onDone} disabled={selected.length != cost}>決定</button></>;
+                return [node, cost];
+            }
+        }
+
+        // Modanism
+        if (currentEffect.command.name == "modanism") {
+            if (built.length == 0) {
+                const onDone = () => {
+                    if (props.validate({built: selected[0]}, currentEffect)) {
+                        setBuilt(selected);
+                        setSelected([]);
+                    }
+                };
+                const node = (
+                    <>
+                        <p>{`建てるカードを選んでください`}</p>
+                        <button disabled={selected.length == 0} onClick={onDone}>決定</button>
+                    </>
+                );
+                return [node, 1];
+            } else {
+                const cost = cardFactory(me.hand[built[0]]).cost || 0;
+                const onDone = () => {
+                    props.resolve({built: built[0], discard: selected});
+                    reset();
+                }
+                const node = <><p>{`コストとして捨てるカードを${cost}枚選んでください(消費財は2枚分としてカウントされます)`}</p><button onClick={onDone} disabled={selected.length != cost}>決定</button></>;
                 return [node, cost];
             }
         }

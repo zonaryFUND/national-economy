@@ -125,27 +125,26 @@ const state: React.FC<GameProps & GatewayProps> = props => {
         );
         const table = players.map(player => {
             const score = calcScore(player);
-            const rank = (() => {
-                if (score.total >= 150) return "S：世界有数の時価総額";
-                if (score.total >= 125) return "A：ハイテク分野に進出し業界最大シェア";
-                if (score.total >= 100) return "B：一部上場企業として存続";
-                if (score.total >= 75) return "C：地元自治体で「最も就職したい企業」に";
-                if (score.total >= 50) return "D：民事再生を経て同業他社により買収";
-                if (score.total >= 25) return "E：不正会計が発覚し破綻";
-                return "F：評価なし";
-            })();
 
-            /*
             const rank = (() => {
-                if (score.total >= 150) return "S：「世界の半分」を号する企業帝国";
-                if (score.total >= 125) return "A：新興分野で事実上の独占を確立";
-                if (score.total >= 100) return "B：首都に本社を構え議会にも影響力";
-                if (score.total >= 75) return "C：地域経済の一角として存続";
-                if (score.total >= 50) return "D：労働争議の末取締役辞任";
-                if (score.total >= 25) return "E：工業化の波に飲まれ廃業";
+                if (props.game.board.publicBuildings.findIndex(b => b.card == "遺跡") > -1) {
+                    if (score.total >= 150) return "S：「世界の半分」を号する企業帝国";
+                    if (score.total >= 125) return "A：新興分野で事実上の独占を確立";
+                    if (score.total >= 100) return "B：首都に本社を構え議会にも影響力";
+                    if (score.total >= 75) return "C：地域経済の一角として存続";
+                    if (score.total >= 50) return "D：労働争議の末取締役辞任";
+                    if (score.total >= 25) return "E：工業化の波に飲まれ廃業";
+                } else {
+                    if (score.total >= 150) return "S：世界有数の時価総額";
+                    if (score.total >= 125) return "A：ハイテク分野に進出し業界最大シェア";
+                    if (score.total >= 100) return "B：一部上場企業として存続";
+                    if (score.total >= 75) return "C：地元自治体で「最も就職したい企業」に";
+                    if (score.total >= 50) return "D：民事再生を経て同業他社により買収";
+                    if (score.total >= 25) return "E：不正会計が発覚し破綻";
+                }
                 return "F：評価なし";
             })();
-            */
+            
             return (
                 <tr className={nameStyle(player.id)}>
                     <td>{player.name || player.id}</td>

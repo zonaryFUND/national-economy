@@ -88,7 +88,7 @@ export const chooseToFreeBuild = (validator: (card: CardName) => boolean) => cre
         const player = getCurrentPlayer(game);
         if (player) {
             const target = player.hand[(resolver as TargetIndexCommand).targetIndex];
-            return validator(target) && cardConstructEffect(target)?.available(game) ?
+            return validator(target) && cardConstructEffect(target)?.available(game) != false ?
                 true :
                 "そのカードは建設できません";
         } else {

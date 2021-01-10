@@ -27,7 +27,7 @@ export const Rural: Card = {
     type: "building",
     cost: 1,
     imageURL: "https://1.bp.blogspot.com/-2iC8CU3nAmY/XaKa65UgJJI/AAAAAAABVkM/dRCQ0kC_u0wb-ntMzTpi1iioFCfHa7lZgCNcBGAsYHQ/s180-c/hokkaidou_kaitaku_syuujin.png",
-    description: "消費財を2枚引く|or|消費財を2枚捨ててカードを3枚引く",
+    description: "消費財を2枚引く\n---or---\n消費財を2枚捨ててカードを3枚引く",
     buildingType: ["agricultural"],
     score: 6    
 };

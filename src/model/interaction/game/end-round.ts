@@ -2,7 +2,6 @@ import State from "monad/state/state";
 import { Game } from "model/protocol/game/game";
 import { EffectLog } from "./sync-effect";
 import { Building } from "model/protocol/game/building";
-import { Player } from "model/protocol/game/player";
 
 function removeWorkers(buildings: Building[]): Building[] {
     return buildings.map(b => ({card: b.card, workers: []}));

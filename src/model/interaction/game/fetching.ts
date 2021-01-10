@@ -212,7 +212,7 @@ function removeEffectingWorker(game: Game, to: "mine" | "public" | "sold", index
 
     const fetchingIndices = player.workers.reduce((p, w, i) => {
         if (!w.fetched) return p;
-        return p.concat(i).slice(0, isDoubleWorker ? 2 : 1);
+        return p.concat(i).slice(isDoubleWorker ? -2 : -1);
     }, [] as number[]);
     const workerAdjusted: Player = {
         ...player,
