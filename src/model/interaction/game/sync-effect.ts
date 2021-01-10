@@ -5,6 +5,7 @@ import { Board } from "model/protocol/game/board";
 import State from "monad/state/state";
 import { CardName } from "model/protocol/game/card";
 import { onBoard, onCurrentPlayer, currentPlayer, removeFromHand, handToBuildings, addToTrash, addToHand, drawBuildings, lift, gainVictoryToken, reserve } from "./state-components";
+import { cardConstructEffect } from "./card-construct-effects";
 
 export type EffectLog = string[];
 
@@ -65,6 +66,8 @@ export function drawBuilding(amount: number): SyncEffect {
 }
 
 export function disposeHand(targetHandIndices: number[]): SyncEffect {
+    if (targetHandIndices.length == 0) return {affect: State.returnS([]), available: _ => true};
+
     const affect = onCurrentPlayer(removeFromHand(targetHandIndices))
                 .flatMap(tuple => {
                     const disposedBuidlings = tuple[0].filter(c => c != "消費財");
@@ -82,12 +85,43 @@ export function disposeHand(targetHandIndices: number[]): SyncEffect {
     };
 }
 
+export function disposeConsumerGoods(amount: number): SyncEffect {
+    function removeConsumerGoods(hand: CardName[], amount: number): CardName[] {
+        if (amount == 0) return hand;
+        const index = hand.findIndex(c => c == "消費財");
+        const removed = hand.filter((_, i) => i != index);
+        return removeConsumerGoods(removed, amount - 1);
+    }
+
+    const playerEffect = State
+        .get<Player>()
+        .modify(p => ({
+            ...p,
+            hand: removeConsumerGoods(p.hand, amount)
+        }));
+    const eff = onCurrentPlayer(playerEffect)
+        .map(t => [`${t[0].name || t[0].id}が手札から消費財${amount}枚を捨てました`]);
+        
+    return {
+        affect: lift(eff),
+        available: game => getCurrentPlayer(game)!.hand.filter(c => c == "消費財").length >= amount
+    };
+}
+
 export function build(targetHandIndices: number[]): SyncEffect {
-    const affect = onCurrentPlayer(handToBuildings(targetHandIndices))
-                .map(tuple => [`${tuple[1].name || tuple[1].id}が${tuple[0].join("と")}を建設しました`])
+    const affect = lift(onCurrentPlayer(handToBuildings(targetHandIndices)))
+                .flatMap(tuple => {
+                    const buildLog = State.returnS<GameIO, EffectLog>([`${tuple[1].name || tuple[1].id}が${tuple[0].join("と")}を建設しました`]);
+                    return tuple[0].reduce((prev, card) => {
+                        const effect = cardConstructEffect(card);
+                        if (effect) return prev.flatMap(log => effect.affect.map(l => log.concat(l)));
+                        return prev;
+                    }, buildLog);
+                });
+    
 
     return {
-        affect: lift(affect),
+        affect: affect,
         available: _ => true
     };
 }

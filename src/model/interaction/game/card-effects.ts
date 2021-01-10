@@ -1,15 +1,13 @@
-import { SyncEffect, concatSyncEffect, drawBuilding, becomeStartPlayer, employ, drawConsumerGoods, disposeBuilding, earn, disposeHand, EffectLog, build, gainVictoryTokens, returnToHousehold, reserveCards } from "./sync-effect";
-import { AsyncCommand, AsyncResolver, chooseToBuild, ChooseToBuildCommand, chooseToFreeBuild, TargetIndexCommand, composeBuild, MutliBuildCommand, TargetHandCommand, chooseToDispose, designOffice, earthConstruction, MultiBuildRequest } from "./async-command";
+import { SyncEffect, concatSyncEffect, drawBuilding, becomeStartPlayer, employ, drawConsumerGoods, disposeBuilding, earn, disposeHand, EffectLog, build, gainVictoryTokens, returnToHousehold, reserveCards, disposeConsumerGoods } from "./sync-effect";
+import { AsyncCommand, AsyncResolver, chooseToBuild, ChooseToBuildCommand, chooseToFreeBuild, TargetIndexCommand, composeBuild, MutliBuildCommand, TargetHandCommand, chooseToDispose, designOffice, earthConstruction, MultiBuildRequest, rural, OptionSelectionCommand, modanism } from "./async-command";
 import { Game, getCurrentPlayer, GameIO } from "model/protocol/game/game";
 import { CardName } from "model/protocol/game/card";
 import State from "monad/state/state";
 import cardFactory from "factory/card";
-import { currentPlayer, drawBuildings, onBoard, onCurrentPlayer, addToHand, addToTrash, lift } from "./state-components";
+import { currentPlayer, drawBuildings, onBoard, onCurrentPlayer, addToHand, addToTrash, lift, gainVictoryToken } from "./state-components";
 import { Player } from "model/protocol/game/player";
 import { InRoundState } from "model/protocol/game/state";
 import { calcCost } from "./card";
-import player from "components/room/player";
-import players from "components/room/players";
 
 export interface AsyncCardEffect {
     command: AsyncCommand;
@@ -146,8 +144,71 @@ export function cardEffect(card: CardName, indexOnHand?: number): CardEffectType
                     return drawConsumerGoods(drawn).affect;
                 }),
                 available: _ => true
-            }
+            };
+
+        // Glory
+        case "遺跡":
+            return concatSyncEffect(drawConsumerGoods(1), gainVictoryTokens(1));
+        case "工房":
+            return concatSyncEffect(drawBuilding(1), gainVictoryTokens(1));
+        case "養鶏場":
+            return {
+                affect: lift(currentPlayer()).flatMap(p => {
+                    const drawn = p.hand.length % 2 ? 3 : 2;
+                    return drawConsumerGoods(drawn).affect
+                }),
+                available: _ => true
+            };
+        case "ゲームカフェ":
+            return {
+                affect: lift(currentPlayer()).flatMap(p => {
+                    const amount = p.workers.filter(w => !w.fetched && w.type != "training-human").length == 0 ? 10 : 5;
+                    return earn(amount).affect
+                }),
+                available: game => {
+                    const p = getCurrentPlayer(game);
+                    if (p == null) return false;
+                    const amount = p.workers.filter(w => !w.fetched && w.type != "training-human").length == 0 ? 10 : 5;
+                    return game.board.houseHold >= amount;
+                }
+            };
+        case "綿花農場":
+            return {
+                affect: drawConsumerGoods(5).affect,
+                available: game => {
+                    const p = getCurrentPlayer(game);
+                    if (p == null) return false;
+                    return p.workers.filter(w => !w.fetched && w.type != "training-human").length >= 2;
+                }
+            };
+        case "美術館":
+            return {
+                affect: lift(currentPlayer()).flatMap(p => {
+                    const amount = p.hand.length == 5 ? 14 : 7;
+                    return earn(amount).affect
+                }),
+                available: game => {
+                    const p = getCurrentPlayer(game);
+                    if (p == null) return false;
+                    const amount = p.hand.length == 5 ? 14 : 7;
+                    return game.board.houseHold >= amount;
+                }
+            };
+        case "炭鉱":
+            return {
+                affect: drawBuilding(5).affect,
+                available: game => {
+                    const p = getCurrentPlayer(game);
+                    if (p == null) return false;
+                    return p.workers.filter(w => !w.fetched && w.type != "training-human").length >= 2; 
+                }
+            };
+        case "精錬所":
+            return drawBuilding(3);
+        case "温室":
+            return drawConsumerGoods(4);
         
+
         // 選択肢あり
         // 建設系
         case "大工":
@@ -248,6 +309,62 @@ export function cardEffect(card: CardName, indexOnHand?: number): CardEffectType
                 }
             }
 
+        // Glory
+        case "植民団":
+            return {
+                command: chooseToBuild((card, p) => calcCost(cardFactory(card), p)),
+                resolve: (resolver: AsyncResolver) => {
+                    const r = resolver as ChooseToBuildCommand;
+                    const discard = r.discard!.map(i => i > r.built ? i - 1 : i);
+                    return concatSyncEffect(build([r.built]), disposeHand(discard), drawConsumerGoods(1)).affect;
+                }
+            };
+        case "摩天建設":
+            return {
+                command: chooseToBuild((card, p) => calcCost(cardFactory(card), p)),
+                resolve: (resolver: AsyncResolver) => {
+                    const r = resolver as ChooseToBuildCommand;
+                    const discard = r.discard!.map(i => i > r.built ? i - 1 : i);
+                    const buildEffect = concatSyncEffect(build([r.built]), disposeHand(discard)).affect;
+
+                    return buildEffect.flatMap(log => 
+                        lift(currentPlayer())
+                            .flatMap(p => {
+                                if (p.hand.length > 0) return State.returnS(log);
+                                return drawBuilding(2).affect.map(ln => log.concat(...ln));
+                            })
+                        );
+                }
+            }
+        case "モダニズム建設":
+            return {
+                command: modanism,
+                resolve: (resolver: AsyncResolver) => {
+                    const r = resolver as ChooseToBuildCommand;
+                    const discard = r.discard!.map(i => i > r.built ? i - 1 : i);
+                    return concatSyncEffect(build([r.built]), disposeHand(discard)).affect;
+                }
+            };
+        case "転送装置":
+            const freeBuildCommand = chooseToFreeBuild(_ => true);
+            const workerConditionAdded = {
+                ...freeBuildCommand,
+                available: (game: Game) => {
+                    if (freeBuildCommand.available(game) == false) return false;
+                    const player = getCurrentPlayer(game);
+                    if (player) return player.workers.filter(w => !w.fetched && w.type != "training-human").length >= 2;
+                    return false;
+                }
+            };
+            return {
+                command: workerConditionAdded,
+                resolve: (resolver: AsyncResolver) => {
+                    const r = resolver as TargetIndexCommand;
+                    return build([r.targetIndex]).affect;
+                }
+            }
+
+
         // 捨て札系
         case "露店":
             return createDisposeHandAndEarnEffect(1, 6);
@@ -275,6 +392,14 @@ export function cardEffect(card: CardName, indexOnHand?: number): CardEffectType
             return createDisposeAndDrawEffect(2, 4);
         case "食堂":
             return createDisposeHandAndEarnEffect(1, 8);
+
+        // Glory
+        case "蒸気工場":
+            return createDisposeAndDrawEffect(2, 4);
+        case "劇場":
+            return createDisposeHandAndEarnEffect(2, 20);
+        case "機関車工場":
+            return createDisposeAndDrawEffect(3, 7);
     
         // 特殊
         case "設計事務所":
@@ -306,6 +431,17 @@ export function cardEffect(card: CardName, indexOnHand?: number): CardEffectType
                 }
             }
 
+        // Glory
+        case "農村":
+            return {
+                command: rural,
+                resolve: (resolver: AsyncResolver) => {
+                    const r = resolver as OptionSelectionCommand;
+                    const effect = [drawConsumerGoods(2), concatSyncEffect(disposeConsumerGoods(2), drawBuilding(3))][r.index]
+                    return effect.affect;
+                }
+            };
+
         // 使用不可
         case "倉庫":
         case "法律事務所":
@@ -327,6 +463,18 @@ export function cardEffect(card: CardName, indexOnHand?: number): CardEffectType
         case "投資銀行":
         case "植物園":
         case "博物館":
+            return "notforuse";
+
+        // Glory
+        case "遺物":
+        case "記念碑":
+        case "消費者組合":
+        case "ギルドホール":
+        case "象牙の塔":
+        case "革命広場":
+        case "収穫祭":
+        case "技術展示会":
+        case "浄火の神殿":
             return "notforuse";
 
         default:

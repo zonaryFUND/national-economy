@@ -4,10 +4,19 @@ import { CardName } from "./protocol/game/card";
 import player from "components/room/player";
 import { fisherYatesShuffle } from "./shuffle";
 
-export function launch(players: string[], lineup?: "original" | "mecenat" | "glory"): Game {
+export function launch(players: string[], lineup: "original" | "mecenat" | "glory"): Game {
     const ids: PlayerIdentifier[] = ["red", "blue", "orange", "purple"];
     const attendants = ids.slice(0, players.length).sort(_ => Math.random());
-    const d = lineup == "mecenat" ? mecenatDeck : originalDeck;
+    const d = (() => {
+        switch (lineup) {
+            case "original":
+                return originalDeck;
+            case "mecenat":
+                return mecenatDeck;
+            case "glory":
+                return gloryDeck;
+        }
+    })();
     const deck = fisherYatesShuffle(fisherYatesShuffle(fisherYatesShuffle(fisherYatesShuffle(fisherYatesShuffle(d)))));
 
     const p: {[index: number]: Player} = fisherYatesShuffle(fisherYatesShuffle(fisherYatesShuffle(fisherYatesShuffle(fisherYatesShuffle(attendants))))).reduce((prev, id, i) => {
@@ -33,7 +42,7 @@ export function launch(players: string[], lineup?: "original" | "mecenat" | "glo
             houseHold: 0,
             players: p,
             startPlayer: attendants[0],
-            publicBuildings: publicBuildings(players.length).map(c => ({card: c, workers: []})),
+            publicBuildings: publicBuildings(players.length, lineup == "glory").map(c => ({card: c, workers: []})),
             soldBuildings: []
         },
         state: {
@@ -43,8 +52,14 @@ export function launch(players: string[], lineup?: "original" | "mecenat" | "glo
     };
 }
 
-function publicBuildings(players: number): CardName[] {
-    const first: CardName[] = ["採石場", "鉱山", "学校"];
+function publicBuildings(players: number, glory: boolean): CardName[] {
+    const first = (() => {
+        if (glory) {
+            return ["採石場", "鉱山", "学校", "遺跡"] as CardName[]
+        } else {
+            return ["採石場", "鉱山", "学校"] as CardName[]
+        }
+    })();
     const carpenters: CardName[] = [...Array(Math.max(players - 1, 1))].map(_ => "大工");
     const last: CardName[] = ["露店", "市場", "高等学校", "スーパーマーケット", "大学", "百貨店", "専門学校", "万博"];
     return first.concat(...carpenters, ...last);    
@@ -105,6 +120,35 @@ const mecenatDeck: CardName[] = [
     ...cards("投資銀行", 1),
     ...cards("植物園", 1),
     ...cards("博物館", 1)
+];
+
+const gloryDeck: CardName[] = [
+    ...cards("遺物", 3),
+    ...cards("農村", 6),
+    ...cards("植民団", 5),
+    ...cards("工房", 5),
+    ...cards("蒸気工場", 8),
+    ...cards("養鶏場", 4),
+    ...cards("摩天建設", 3),
+    ...cards("ゲームカフェ", 3),
+    ...cards("綿花農場", 3),
+    ...cards("美術館", 2),
+    ...cards("記念碑", 2),
+    ...cards("消費者組合", 1),
+    ...cards("機械人形", 5),
+    ...cards("炭鉱", 2),
+    ...cards("モダニズム建設", 2),
+    ...cards("劇場", 2),
+    ...cards("ギルドホール", 1),
+    ...cards("象牙の塔", 1),
+    ...cards("精錬所", 3),
+    ...cards("転送装置", 2),
+    ...cards("革命広場", 1),
+    ...cards("収穫祭", 1),
+    ...cards("技術展示会", 1),
+    ...cards("温室", 2),
+    ...cards("浄火の神殿", 1),
+    ...cards("機関車工場", 2)
 ];
 
 function cards(name: CardName, amount: number): CardName[] {

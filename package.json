@@ -47,6 +47,7 @@
   "scripts": {
     "dev": "webpack-dev-server --mode development",
     "test": "./node_modules/.bin/mocha -r ts-node/register -r tsconfig-paths/register src/test/**/*.ts --timeout 30000",
-    "mecenat-test": "./node_modules/.bin/mocha -r ts-node/register -r tsconfig-paths/register src/test/interaction/card-effects/2-mecenat/*.ts --timeout 30000"
+    "mecenat-test": "./node_modules/.bin/mocha -r ts-node/register -r tsconfig-paths/register src/test/interaction/card-effects/2-mecenat/*.ts --timeout 30000",
+    "glory-test": "./node_modules/.bin/mocha -r ts-node/register -r tsconfig-paths/register src/test/interaction/card-effects/3-glory/*.ts --timeout 30000"
   }
 }

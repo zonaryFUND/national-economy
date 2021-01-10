@@ -2,7 +2,6 @@ import "mocha";
 import { cardEffect } from "model/interaction/game/card-effects";
 import { CardName } from "model/protocol/game/card";
 import { BlankBed, TestPlayerRed, available, asyncResolveFail, assertAffectResolve, unavailable } from "test/interaction/bed";
-import { Game } from "model/protocol/game/game";
 import { playerAffected } from "model/interaction/game/util";
 
 describe("プレハブ工務店", () => {
@@ -22,7 +21,7 @@ describe("プレハブ工務店", () => {
         available(bed("墓地"), prefabricatedBuilder);
     });
 
-    it("手札に農業系カードがないと使用不可能", () => {
+    it("手札に価値10以下のカードがないと使用不可能", () => {
         unavailable(bed("消費財"), prefabricatedBuilder);
         unavailable(bed("プレハブ工務店"), prefabricatedBuilder);
         unavailable(bed("博物館"), prefabricatedBuilder);

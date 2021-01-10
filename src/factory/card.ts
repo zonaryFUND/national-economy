@@ -4,6 +4,7 @@ import { Quarry, Mine, School, Carpenter, Stall, StallMulti, Market, MarketMulti
 import { ConsumerGoods } from "./consumer-goods";
 import { CardName } from "model/protocol/game/card";
 import { VegetableGarden, Ironworks, Lottery, AmusementPark, PotatoField, TouristRanch, BuildingCompany, Laboratory, FoodFactory, Brewery, EarthConstruction, PetroleumComplex, Cathedral, TempleCarpenter, Shipyard, IndustrialPark, Cafeteria, PrefabricatedBuilder, Nursery, OldTown, AccountingFirm, Graveyard, ExportPort, RailroadStation, InvestmentBank, BotanicalGarden, Museum } from "./mecenat-buildings";
+import { Ruins, Artifact, Rural, Colony, Workshop, SteamFactory, PoultryFarm, SkyscraperConstrution, GameCafe, CottonFarm, Monument, ConsumerUnion, Automata, CoalMine, ModernismConstruction, Theater, GuildHall, IvoryTower, Smelter, Teleporter, RevolutionSquare, Festival, TechExhibition, Greenhouse, EmpyrialTemple, LocomotiveFactory, ArtMuseum } from "./glory-buildings";
 
 export default function cardFactory(name: CardName, players: number = 2): Card {
     switch (name) {
@@ -98,6 +99,39 @@ export default function cardFactory(name: CardName, players: number = 2): Card {
                         return InvestmentBank;
         case "植物園":  return BotanicalGarden;
         case "博物館":  return Museum;
+
+
+        // グローリーの追加公共建物カード
+        case "遺跡": return Ruins;
+
+
+        // グローリーの建物カード
+        case "遺物": return Artifact;
+        case "農村": return Rural;
+        case "植民団": return Colony;
+        case "工房": return Workshop;
+        case "蒸気工場": return SteamFactory;
+        case "養鶏場": return PoultryFarm;
+        case "摩天建設": return SkyscraperConstrution;
+        case "ゲームカフェ": return GameCafe;
+        case "綿花農場": return CottonFarm;
+        case "美術館": return ArtMuseum;
+        case "記念碑": return Monument;
+        case "消費者組合": return ConsumerUnion;
+        case "機械人形": return Automata;
+        case "炭鉱": return CoalMine;
+        case "モダニズム建設": return ModernismConstruction;
+        case "劇場": return Theater;
+        case "ギルドホール": return GuildHall;
+        case "象牙の塔": return IvoryTower;
+        case "精錬所": return Smelter;
+        case "転送装置": return Teleporter;
+        case "革命広場": return RevolutionSquare;
+        case "収穫祭": return Festival;
+        case "技術展示会":return TechExhibition;
+        case "温室": return Greenhouse;
+        case "浄火の神殿": return EmpyrialTemple;
+        case "機関車工場": return LocomotiveFactory;
 
         // 消費財
         case "消費財":  return ConsumerGoods;

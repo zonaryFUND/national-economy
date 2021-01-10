@@ -46,10 +46,14 @@ const card: React.FC<Props> = props => {
         <span className={style.reduction}>{replaceCardTypeMark(card.costReduction.description)}</span> : 
         null;
 
+    const onConstructed = card.onConstructed ?
+        <span className={style.onconstructed}>{replaceCardTypeMark(card.onConstructed)}</span> :
+        null;
+
     return (
         <li className={`${style.card} ${cardStyle}`} onClick={props.onClick} style={props.onClick ? {cursor: "pointer"} : undefined}>
             <header style={card.cost ? {paddingLeft: 28} : undefined}>
-                {card.cost ? <p className={card.costReduction ? style.reduction : undefined}>{card.cost}</p> : null}
+                {card.cost != undefined ? <p className={card.costReduction ? style.reduction : undefined}>{card.cost}</p> : null}
                 <h3 style={card.name.length > 5 ? {fontSize: 10} : undefined}>{card.name}</h3>
             </header>
             <div className={style.img}>
@@ -64,8 +68,9 @@ const card: React.FC<Props> = props => {
             <p className={style.tooltip}>
                 {card.name}<br />
                 {cardType ? <>{cardType}<br /></> : null}
-                {card.cost ? <>建設コスト{card.cost}<br /><br /></> : null}
+                {card.cost != undefined ? <>建設コスト{card.cost}<br /><br /></> : null}
                 {costReduction ? <>{costReduction}<br /><br /></> : null}
+                {onConstructed ? <>{onConstructed}<br /><br /></> : null}
                 {description}<br /><br />
                 {card.score != undefined ? `資産価値：$${card.score}` : null}
             </p>

@@ -10,9 +10,10 @@ const publicEstate: React.FC<GameProps & GatewayProps> = props => {
     const onFetch = (to: "public" | "sold", index: number) => () => props.fetch(to, index);
 
     const carpenters = Math.max(Object.keys(props.game.board.players).length - 1, 1);
+    const isGlory = props.game.board.publicBuildings.findIndex(b => b.card == "遺跡") != -1;
     const publicBuildings = props.game.board.publicBuildings.map((b, i) => {
-        const activeRound = i < 3 + carpenters ? undefined : 
-                            i - 1 - carpenters > props.game.board.currentRound ? i - 1 - carpenters : undefined;
+        const activeRound = i < (isGlory ? 4 : 3) + carpenters ? undefined : 
+                            i - (isGlory ? 2 : 1) - carpenters > props.game.board.currentRound ? i - (isGlory ? 2 : 1) - carpenters : undefined;
         const onClick = fetching && activeRound == undefined ? onFetch("public", i) : undefined;
         return <Card key={`${b.card}-${i}`} playerCount={Object.keys(props.game.board.players).length} card={b.card} activeRound={activeRound} onClick={onClick}><Workers workers={b.workers} /></Card>;
     });

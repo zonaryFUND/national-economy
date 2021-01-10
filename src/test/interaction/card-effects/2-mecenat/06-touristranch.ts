@@ -2,7 +2,6 @@ import "mocha";
 import { cardEffect } from "model/interaction/game/card-effects";
 import { Game } from "model/protocol/game/game";
 import { BlankBed, TestPlayerRed, available, unavailable, assertAffect } from "test/interaction/bed";
-import { playerAffected } from "model/interaction/game/util";
 
 describe("観光牧場", () => {
     const touristranch = cardEffect("観光牧場");

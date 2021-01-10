@@ -8,6 +8,7 @@ import { drawBuildings } from "./state-components";
 import { InRoundState } from "model/protocol/game/state";
 import { calcCost } from "./card";
 import { Player } from "model/protocol/game/player";
+import { cardConstructEffect } from "./card-construct-effects";
 
 export interface DisposeRequest {
     disposeCount: number;
@@ -21,7 +22,11 @@ export interface MultiBuildRequest {
     multiCostCalclator: (cards: CardName[], player: Player) => number | undefined;
 }
 
-export type AsyncCommandType = DisposeRequest | "free-build" | BuildRequest | MultiBuildRequest | "design-office"
+export interface OptionsRequest {
+    options: (player: Player) => {text: string, available: boolean}[]
+}
+
+export type AsyncCommandType = DisposeRequest | "free-build" | BuildRequest | MultiBuildRequest | "design-office" | OptionsRequest | "modanism";
 
 export interface AsyncCommand {
     name: AsyncCommandType;
@@ -40,7 +45,11 @@ export interface TargetIndexCommand {
     targetIndex: number;
 }
 
-export type AsyncResolver = TargetHandCommand | ChooseToBuildCommand | MutliBuildCommand | TargetIndexCommand;
+export interface OptionSelectionCommand {
+    index: number;
+}
+
+export type AsyncResolver = TargetHandCommand | ChooseToBuildCommand | MutliBuildCommand | TargetIndexCommand | OptionSelectionCommand;
 
 function createCommand(name: AsyncCommandType, awaitingMessage: string, directionMessage: string, available: (game: Game) => boolean, validator: (resolver: AsyncResolver, game: Game) => true | string) {
     return {
@@ -78,7 +87,8 @@ export const chooseToFreeBuild = (validator: (card: CardName) => boolean) => cre
     (resolver, game) => {
         const player = getCurrentPlayer(game);
         if (player) {
-            return validator(player.hand[(resolver as TargetIndexCommand).targetIndex]) ?
+            const target = player.hand[(resolver as TargetIndexCommand).targetIndex];
+            return validator(target) && cardConstructEffect(target)?.available(game) ?
                 true :
                 "そのカードは建設できません";
         } else {
@@ -107,8 +117,9 @@ export const chooseToBuild = (costCalclator: (card: CardName, player: Player) =>
         const player = getCurrentPlayer(game);
         if (player == undefined) return "謎のエラー";
         const r = resolver as ChooseToBuildCommand;
-        const cost = costCalclator(player.hand[r.built], player);
-        if (cost == undefined) return "そのカードは建設できません";
+        const target = player.hand[r.built];
+        const cost = costCalclator(target, player);
+        if (cost == undefined || cardConstructEffect(target)?.available(game) == false) return "そのカードは建設できません";
         if (cost > player.hand.length - 1) return "建設に必要なコストを支払えません";
         return true;
     }
@@ -136,10 +147,14 @@ export const composeBuild = createCommand(
         const player = getCurrentPlayer(game);
         if (player == undefined) return "謎のエラー";
         const r = resolver as MutliBuildCommand;
-        const cost1 = calcCost(cardFactory(player.hand[r.built[0]]), player);
-        const cost2 = calcCost(cardFactory(player.hand[r.built[1]]), player);
+        const target1 = player.hand[r.built[0]];
+        const cost1 = calcCost(cardFactory(target1), player);
+        const target2 = player.hand[r.built[1]];
+        const cost2 = calcCost(cardFactory(target2), player);
 
-        if (cost1 == undefined || cost2 == undefined) return "建設できないカードが含まれています";
+        if (cost1 == undefined || cost2 == undefined ||
+            cardConstructEffect(target1)?.available(game) == false || cardConstructEffect(target2)?.available(game) == false) 
+            return "建設できないカードが含まれています";
         if (cost1 != cost2) return "建設できるのはコストが同じカード2枚です";
         return cost1 < player.hand.length - 1 ? true : "建設に必要なコストを支払えません";
     }
@@ -167,10 +182,14 @@ export const earthConstruction = createCommand(
         const player = getCurrentPlayer(game);
         if (player == undefined) return "謎のエラー";
         const r = resolver as MutliBuildCommand;
-        const cost1 = calcCost(cardFactory(player.hand[r.built[0]]), player);
-        const cost2 = calcCost(cardFactory(player.hand[r.built[1]]), player);
+        const target1 = player.hand[r.built[0]];
+        const cost1 = calcCost(cardFactory(target1), player);
+        const target2 = player.hand[r.built[1]];
+        const cost2 = calcCost(cardFactory(target2), player);
 
-        if (cost1 == undefined || cost2 == undefined) return "建設できないカードが含まれています";
+        if (cost1 == undefined || cost2 == undefined ||
+            cardConstructEffect(target1)?.available(game) == false || cardConstructEffect(target2)?.available(game) == false) 
+            return "建設できないカードが含まれています";
         return cost1 + cost2 <= player.hand.length - 2 ? true : "建設に必要なコストを支払えません";
     }
 );
@@ -210,5 +229,32 @@ export const designOffice = (() => {
     }
 })();
 
- 
-    
+export const rural = createCommand(
+    {options: player => [{text: "消費財を2枚引く", available: true}, {text: "消費財を2枚捨ててカードを3枚引く", available: player.hand.filter(c => c == "消費財").length >= 2}]},
+    "消費財を2枚引くか、消費財を2枚捨ててカードを3枚引くか選んでいます",
+    "消費財を2枚引くか、消費財を2枚捨ててカードを3枚引くか選んでください",
+    _ => true,
+    _ => true
+);
+
+export const modanism = createCommand(
+    "modanism",
+    "建設するカードと捨てるカードを選んでいます",
+    "手札から建設するカードと捨てるカードを選んでください",
+    game => {
+        const player = getCurrentPlayer(game);
+        if (player == null) return false;
+        const affordable = player.hand.length + player.hand.filter(c => c == "消費財").length - 1;
+        return player.hand.findIndex(c => (cardFactory(c).cost || 99) <= affordable) > -1;
+    },
+    (resolver, game) => {
+        const player = getCurrentPlayer(game);
+        if (player == undefined) return "謎のエラー";
+        const r = resolver as ChooseToBuildCommand;
+        const target = player.hand[r.built];
+        const cost = cardFactory(target).cost;
+        if (cost == undefined || cardConstructEffect(target)?.available(game) == false) return "そのカードは建設できません";
+        if (cost > player.hand.length - 1) return "建設に必要なコストを支払えません";
+        return true;
+    }
+)

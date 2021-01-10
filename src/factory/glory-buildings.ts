@@ -1,4 +1,5 @@
 import { Card } from "model/interaction/game/card";
+import cardFactory from "./card";
 
 export const Ruins: Card = {
     name: "遺跡",
@@ -90,7 +91,7 @@ export const GameCafe: Card = {
     type: "building",
     cost: 2,
     imageURL: "https://3.bp.blogspot.com/-RTitFpO94mY/V1z8v_6cezI/AAAAAAAA7L0/8BGqS0IwCQMozc3qnCH5nsRQeDEWk1OyACLcB/s400/board_game.png",
-    description: "家計から$5を得る\nこれがラウンド最後の行動なら$10得る",
+    description: "家計から$5を得る\nこれがラウンド最後の(あなたの)行動なら$10得る",
     buildingType: [],
     score: 10
 };
@@ -105,7 +106,7 @@ export const CottonFarm: Card = {
     score: 14
 };
 
-export const Museum: Card = {
+export const ArtMuseum: Card = {
     name: "美術館",
     type: "building",
     cost: 3,
@@ -132,7 +133,12 @@ export const ConsumerUnion: Card = {
     imageURL: "https://1.bp.blogspot.com/-9wNqT55EpBQ/XaKa3XzaPgI/AAAAAAABVjg/LRr_JdIn_QIy2g-8hVeW7zq924U-e8L-wCNcBGAsYHQ/s550/family_shopping_bag_paper.png",
     description: "終了時：|agricultural|ｊの合計額20以上で18点\n売却不可",
     buildingType: ["unsellable"],
-    score: 18
+    score: 18,
+    bonusScore: player => player.buildings.reduce((p, b) => {
+        const card = cardFactory(b.card)
+        if (card.buildingType.includes("agricultural")) return p + (card.score || 0);
+        return p;
+    }, 0) >= 20 ? 18 : 0
 };
 
 export const Automata: Card = {
@@ -183,7 +189,9 @@ export const GuildHall: Card = {
     imageURL: "https://3.bp.blogspot.com/-1ejqMi_4t7E/WBsADPzJxDI/AAAAAAAA_SA/yJFJH9Oc2X87EUDZ-69yqNk--UOMb2CTACLcB/s400/building_europe_kojou.png",
     description: "終了時：|agricultural|と|industrial|があれば+20点\n売却不可",
     buildingType: ["unsellable"],
-    score: 20
+    score: 20,
+    bonusScore: player => player.buildings.findIndex(b => cardFactory(b.card).buildingType.includes("agricultural")) > -1 &&
+    player.buildings.findIndex(b => cardFactory(b.card).buildingType.includes("industrial")) > -1 ? 20 : 0
 };
 
 export const IvoryTower: Card = {
@@ -193,7 +201,8 @@ export const IvoryTower: Card = {
     imageURL: "https://4.bp.blogspot.com/-zikT_vinzfM/W6DTD5xFFpI/AAAAAAABO48/_TUQXKpuj0AvVSb7tpKtUhLtlHTUP_w9ACLcBGAs/s400/art_zouge_tou.png",
     description: "終了時：勝利点7枚以上で+22点\n売却不可",
     buildingType: ["unsellable"],
-    score: 22 
+    score: 22,
+    bonusScore: player => player.victoryToken >= 7 ? 22 : 0
 };
 
 export const Smelter: Card = {
@@ -203,7 +212,7 @@ export const Smelter: Card = {
     imageURL: "https://4.bp.blogspot.com/-0DfREiP4rU4/WK_Yo4JzUuI/AAAAAAABCC4/Nv0T7SZ_wlgE-JbYAO6OKifKWJv9BTpWgCLcB/s400/landmark_nirayama_hansyaro.png",
     costReduction: {
         description: "勝利点3枚以上で建設コスト-2",
-        to: player => player.victoryToken >= 3 ? 5 : 3
+        to: player => player.victoryToken >= 3 ? 3 : 5
     },
     description: "カードを3枚引く",
     buildingType: ["industrial"],
@@ -227,7 +236,8 @@ export const RevolutionSquare: Card = {
     imageURL: "https://3.bp.blogspot.com/-p1h2iPbteM8/WNUsxgdeUkI/AAAAAAABC1I/0XNm6mAQpgc40eybb-45IZG4WnFbAF55QCLcB/s400/landmark_roudousenshi_dois_guerreiros.png",
     description: "終了時：人間の労働者5人で+18点\n売却不可",
     buildingType: ["unsellable"],
-    score: 18
+    score: 18,
+    bonusScore: player => player.workers.filter(w => w.type != "automata").length >= 5 ? 18 : 0
 };
 
 export const Festival: Card = {
@@ -237,7 +247,8 @@ export const Festival: Card = {
     imageURL: "https://4.bp.blogspot.com/-14XsgOnPSrg/VoX5JD6nDEI/AAAAAAAA2Sg/VSyE7I4uhn4/s400/chisanchisyou_tokusanhin.png",
     description: "終了時：手札に消費財4枚で+26点\n売却不可",
     buildingType: ["unsellable"],
-    score: 26
+    score: 26,
+    bonusScore: player => player.hand.filter(c => c == "消費財").length >= 4 ? 26 : 0
 };
 
 export const TechExhibition: Card = {
@@ -247,7 +258,12 @@ export const TechExhibition: Card = {
     imageURL: "https://3.bp.blogspot.com/-HvtSRPVSLdM/WWXXCMNXqAI/AAAAAAABFew/RxIi8UEWa2EeynH9A_gkY-SDvKuQmfYGwCLcBGAs/s500/machine_robot_contest_big.png",
     description: "終了時：|industrial|の合計額30以上で+24点\n売却不可",
     buildingType: ["unsellable"],
-    score: 24
+    score: 24,
+    bonusScore: player => player.buildings.reduce((p, b) => {
+        const card = cardFactory(b.card)
+        if (card.buildingType.includes("industrial")) return p + (card.score || 0);
+        return p;
+    }, 0) >= 30 ? 24 : 0
 };
 
 export const Greenhouse: Card = {
@@ -271,7 +287,8 @@ export const EmpyrialTemple: Card = {
     imageURL: "https://3.bp.blogspot.com/-bTpI2R-Kxe0/Viio_KII7WI/AAAAAAAAztM/oNokVj_uJyI/s400/honoo_hi_fire.png",
     description: "終了時：これが唯一の|unsellable|なら+30点\n売却不可",
     buildingType: ["unsellable"],
-    score: 30
+    score: 30,
+    bonusScore: player => player.buildings.filter(b => cardFactory(b.card).buildingType.includes("unsellable")).length == 1 ? 30 : 0
 };
 
 export const LocomotiveFactory: Card = {

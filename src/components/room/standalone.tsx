@@ -6,18 +6,7 @@ import { GatewayContext, GatewayProviderProps } from "./context/gateway";
 import toastr from "toastr";
 
 const standAlone: React.FC = props => {
-    const [game, setGame] = React.useState(launch(["test1"], "mecenat"));
-    /*
-    const [game, setGame] = React.useState<Game>({
-        ...BlankBed,
-        state: {
-            currentPlayer: "red",
-            phase: "oncardeffect",
-            effecting: "設計事務所",
-            revealing: ["不動産屋", "化学工場", "大農園", "法律事務所", "社宅"]
-        }
-    });
-    */
+    const [game, setGame] = React.useState(launch(["test1"], "glory"));
     const [logs, setLogs] = React.useState<string[]>([]);
     const myId = "red";
 
