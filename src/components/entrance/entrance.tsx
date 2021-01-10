@@ -73,7 +73,7 @@ const entrance: React.FC<Props> = props => {
                             </tr>
                             <tr>
                                 <td><label><input type="radio" name="type" id="mecenat" />グローリー</label></td>
-                                <td>自動人形を中心としたダイナミックなセット</td>
+                                <td>機械人形の労働者を中心としたダイナミックなセット</td>
                             </tr>
                         </table>
                         <br />
