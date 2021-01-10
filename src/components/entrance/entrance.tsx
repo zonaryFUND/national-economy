@@ -50,19 +50,32 @@ const entrance: React.FC<Props> = props => {
         const onInput = (e: React.ChangeEvent<HTMLInputElement>) => setCanJoin(e.target.value.length > 0);
 
         const onStart = () => {
-            const target = ["original", "mecenat"].reduce((p, v) => {
+            const target = ["original", "mecenat", "glory"].reduce((p, v) => {
                 if ((document.getElementById(v) as HTMLInputElement).checked) return v;
                 return p;
             }, "original");
-            props.createGame(props.match.params.id, launch(room.players, target as "original" | "mecenat"));
+            props.createGame(props.match.params.id, launch(room.players, target as "original" | "mecenat" | "glory"));
         };
 
         const head = (() => {
             if (myname != undefined && room.players[0] == myname) {
                 return (
                     <>
-                        <label style={{marginRight: 8}}><input type="radio" name="type" id="original" defaultChecked />無印</label>
-                        <label><input type="radio" name="type" id="mecenat" />メセナ</label>
+                        <h3>セットの選択</h3>
+                        <table>
+                            <tr>
+                                <td><label style={{marginRight: 8}}><input type="radio" name="type" id="original" defaultChecked />無印</label></td>
+                                <td>スタンダードなセット</td>
+                            </tr>
+                            <tr>
+                                <td><label><input type="radio" name="type" id="mecenat" />メセナ</label></td>
+                                <td>カード間のシナジーを意識したセット</td>
+                            </tr>
+                            <tr>
+                                <td><label><input type="radio" name="type" id="mecenat" />グローリー</label></td>
+                                <td>自動人形を中心としたダイナミックなセット</td>
+                            </tr>
+                        </table>
                         <br />
                         <button onClick={onStart}>ゲーム開始</button>
                     </>
