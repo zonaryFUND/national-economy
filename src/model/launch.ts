@@ -6,7 +6,7 @@ import { fisherYatesShuffle } from "./shuffle";
 
 export function launch(players: string[], lineup: "original" | "mecenat" | "glory"): Game {
     const ids: PlayerIdentifier[] = ["red", "blue", "orange", "purple"];
-    const attendants = ids.slice(0, players.length).sort(_ => Math.random());
+    const attendants = fisherYatesShuffle(ids.slice(0, players.length));
     const d = (() => {
         switch (lineup) {
             case "original":
