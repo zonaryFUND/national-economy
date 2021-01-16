@@ -62,7 +62,7 @@ const state: React.FC<GameProps & GatewayProps> = props => {
                 <>
                     {inRound.effecting ? <h3>{`${inRound.effecting.card}の効果を解決中...`}</h3> : null}
                     <p>{currentMe ? async.directionMessage : async.awaitingMessage}</p>
-                    {inRound.effecting != null && inRound.effecting.card != "設計事務所" ? <button onClick={props.cancelFetching}>派遣を取り消す</button> : null}
+                    {inRound.effecting != null && inRound.effecting.card != "設計事務所" && currentMe ? <button onClick={props.cancelFetching}>派遣を取り消す</button> : null}
                 </>
             );
         })();
