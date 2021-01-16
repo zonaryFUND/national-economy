@@ -47,7 +47,7 @@ export const Orchard: Card = {
     type: "building",
     cost: 2,
     imageURL: "https://1.bp.blogspot.com/-2dcpgAT1LBI/Vdrjle6FZPI/AAAAAAAAxDw/lo_DX1-XOvk/s250/kajuen_ringo.png",
-    description: "手札が4枚になるまで果樹園を引く",
+    description: "手札が4枚になるまで消費財を引く",
     buildingType: ["agricultural"],
     score: 10
 };
